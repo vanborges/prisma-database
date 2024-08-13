@@ -1,4 +1,4 @@
-# API com Next.js 13 e Prisma
+# API com Next.js e Prisma
 
 Este projeto configura uma API simples usando Next.js 13 e Prisma para gerenciar dados de funcionários, endereços, dependentes e projetos. A API permite operações CRUD para o modelo de dados fornecido
 
@@ -14,23 +14,40 @@ Instale as dependências do projeto:
 ```bash
 npm install
 ```
+### Passo 2: Passos para Criar um Novo Projeto Next.js
 
-### Passo 2: Configurar o Prisma
-#### 2.1: Instale o Prisma ClIENT
+#### 2.1: Cria um novo projeto Next.js com o nome empresa-app
+```bash
+npx create-next-app@latest empresa-app
+```
+- TypeScript: Yes
+- EsLint: No
+- Tailwind: No
+- src directory: Yes
+- App Router: Yes
+- Customize alias: No
+
+#### 2.2: Entre no diretório do projeto
+```bash
+cd empresa-app
+```
+
+### Passo 3: Configurar o Prisma
+#### 3.1: Instale o Prisma ClIENT, typescript e ts-node
 ```bash
 npm install @prisma/client
-npm install --save-dev prisma
+npm install --save-dev ts-node typescript
 ```
-#### 2.2: Inicialize o prisma
+#### 3.2: Inicialize o prisma
 ```bash
 npx prisma init
 ```
-#### 2.3: Configurar o Banco de Dados
+#### 3.3: Configurar o Banco de Dados
 No arquivo .env, defina a URL do banco de dados:
 ```bash
 DATABASE_URL="postgresql://postgres:postgres@localhost:5433/postgres?schema=public"
 ```
-#### 2.4: Definir o Esquema Prisma
+#### 3.4: Definir o Esquema Prisma
 Atualize o arquivo prisma/schema.prisma com o seguinte conteúdo:
 ```bash
 model Funcionario {
@@ -73,15 +90,15 @@ model FuncioanrioProjeto {
   @@id([funcionarioId, projetoId])
 }
 ```
-#### 2.5: Executar a Migration
+#### 3.5: Executar a Migration
 Gera e versiona o esquema do banco de dados:
 ```bash
 npx prisma migrate dev --name init
 ```
 
-### Passo 3: Criar o Seed do Banco de Dados
+### Passo 4: Criar o Seed do Banco de Dados
 
-#### 3.1: Crie um arquivo prisma/seed.ts para popular o banco de dados com dados iniciais:
+#### 4.1: Crie um arquivo src/app/seed.ts para popular o banco de dados com dados iniciais:
 ```bash
 import { PrismaClient } from '@prisma/client';
 
@@ -165,12 +182,12 @@ main()
     await prisma.$disconnect();
   });
 ```
-#### 3.2: Execute o seed com o comando:
+#### 4.2: Execute o seed com o comando:
 ```bash
 npx ts-node prisma/seed.ts
 ```
 
-### Passo 4: Criar a Rota da API
+### Passo 5: Criar a Rota da API
 No diretório src/app/api/funcionarios/, crie o arquivo route.ts:
 ```bash
 import { NextResponse } from 'next/server';
@@ -203,7 +220,7 @@ export async function POST(request: Request) {
 }
 ```
 
-### Passo 6: Iniciar o Servidor
+### Passo 6: Inicie o Servidor de Desenvolvimento
 Inicie o servidor de desenvolvimento Next.js:
 ```bash
 npm run dev

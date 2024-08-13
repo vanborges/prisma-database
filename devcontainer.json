@@ -1,0 +1,13 @@
+{
+  "name": "Next.js + Prisma",
+  "image": "mcr.microsoft.com/vscode/devcontainers/javascript-node:0-14",
+  "extensions": [
+    "prisma.prisma",
+    "esbenp.prettier-vscode"
+  ],
+  "postCreateCommand": "npm install",
+  "forwardPorts": [3000],
+  "settings": {
+    "terminal.integrated.shell.linux": "/bin/bash"
+  }
+}

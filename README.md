@@ -1,4 +1,4 @@
-# API com Next.js e Prisma
+# API com Next.js 13 e Prisma
 
 Este projeto configura uma API simples usando Next.js 13 e Prisma para gerenciar dados de funcionários, endereços, dependentes e projetos. A API permite operações CRUD para o modelo de dados fornecido
 
@@ -10,13 +10,9 @@ Este projeto configura uma API simples usando Next.js 13 e Prisma para gerenciar
 
 ## Instalação e Configuração
 Instale as dependências do projeto:
-### Passo 1: Instalar Dependências
-```bash
-npm install
-```
-### Passo 2: Passos para Criar um Novo Projeto Next.js
+### Passo 1: Passos para Criar um Novo Projeto Next.js
 
-#### 2.1: Cria um novo projeto Next.js com o nome empresa-app
+#### 1.1: Cria um novo projeto Next.js com o nome empresa-app
 ```bash
 npx create-next-app@latest empresa-app
 ```
@@ -27,13 +23,18 @@ npx create-next-app@latest empresa-app
 - App Router: Yes
 - Customize alias: No
 
-#### 2.2: Entre no diretório do projeto
+#### 1.2: Entre no diretório do projeto
 ```bash
 cd empresa-app
 ```
 
+### Passo 2: Instalar Dependências
+```bash
+npm install
+```
+
 ### Passo 3: Configurar o Prisma
-#### 3.1: Instale o Prisma ClIENT, typescript e ts-node
+#### 3.1: Instale o Prisma CLIENT, typescript e ts-node
 ```bash
 npm install @prisma/client
 npm install --save-dev ts-node typescript

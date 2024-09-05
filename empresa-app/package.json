@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "seed": "ts-node src/app/seed.mts"
+    "seed": "ts-node src/app/seed.mjs"
   },
   "dependencies": {
     "@prisma/client": "latest",

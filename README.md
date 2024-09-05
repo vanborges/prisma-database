@@ -1,55 +1,50 @@
-# API com Next.js 13 e Prisma
+## Roteiro Completo para a Aula Prática
 
-Este projeto configura uma API simples usando Next.js 13 e Prisma para gerenciar dados de funcionários, endereços, dependentes e projetos. A API permite operações CRUD para o modelo de dados fornecido
+### Objetivo da Aula:
 
-## Estrutura do Projeto
+- Criar e configurar um modelo Prisma.
+- Gerar migrações para o banco de dados.
+- Testar as operações CRUD (criação, leitura, atualização e exclusão) via API.
+
+### Pré-requisitos:
+
+- Conhecimentos básicos de JavaScript/TypeScript.
+- Node.js instalado.
+- PostgreSQL ou outro banco de dados configurado.
+- VS Code (ou qualquer outro editor de código).
+
+### Estrutura do Projeto
 
 - **Next.js**: Framework para React.
 - **Prisma**: ORM para acesso ao banco de dados.
 - **PostgreSQL**: Banco de dados relacional.
 
-## Instalação e Configuração
-Instale as dependências do projeto:
-### Passo 1: Passos para Criar um Novo Projeto Next.js
-
-#### 1.1: Cria um novo projeto Next.js com o nome empresa-app
+#### Passo 1: Clonar o Repositório
+Inicie clonando o repositório do projeto que será a base para a aula.
 ```bash
-npx create-next-app@latest empresa-app
+git clone https://github.com/vanborges/prisma-database.git
 ```
-- TypeScript: Yes
-- EsLint: No
-- Tailwind: No
-- src directory: Yes
-- App Router: Yes
-- Customize alias: No
-
-#### 1.2: Entre no diretório do projeto
 ```bash
 cd empresa-app
 ```
-
-### Passo 2: Instalar Dependências
 ```bash
 npm install
 ```
+#### Passo 2: Configuração Inicial
 
-### Passo 3: Configurar o Prisma
-#### 3.1: Instale o Prisma CLIENT, typescript e ts-node
+#### 2.1.	Configurar o Banco de Dados:
+Abra o arquivo .env e defina a URL do banco de dados.
+Exemplo:
 ```bash
-npm install @prisma/client
-npm install --save-dev ts-node typescript
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/postgres?schema=public"
 ```
-#### 3.2: Inicialize o prisma
+#### Passo 3: Inicializar o Prisma:
+Certifique-se de que o Prisma está configurado corretamente.
 ```bash
 npx prisma init
 ```
-#### 3.3: Configurar o Banco de Dados
-No arquivo .env, defina a URL do banco de dados:
-```bash
-DATABASE_URL="postgresql://postgres:postgres@localhost:5433/postgres?schema=public"
-```
-#### 3.4: Definir o Esquema Prisma
-Atualize o arquivo prisma/schema.prisma com o seguinte conteúdo:
+#### Passo 4: Criar os Modelos:
+No arquivo prisma/schema.prisma, revise e crie novos modelos se necessário. 
 ```bash
 model Funcionario {
   id          Int               @id @default(autoincrement())
@@ -91,144 +86,29 @@ model FuncioanrioProjeto {
   @@id([funcionarioId, projetoId])
 }
 ```
-#### 3.5: Executar a Migration
-Gera e versiona o esquema do banco de dados:
+#### Passo 5: Gerar migration com base no modelo
+Com o esquema do Prisma configurado, gere a migração e aplique-a ao banco de dados.
 ```bash
 npx prisma migrate dev --name init
 ```
+#### Passo 6: Popular o Banco de Dados com o Script de Seed
+Para popular o banco de dados com dados iniciais, você pode utilizar o script de seed já configurado. O arquivo de seed está localizado em src/app/seed.mts e contém instruções para inserir dados no banco de dados.
 
-### Passo 4: Criar o Seed do Banco de Dados
-
-#### 4.1: Crie um arquivo src/app/seed.ts para popular o banco de dados com dados iniciais:
+Execute o seguinte comando no terminal para rodar o script de seed e popular o banco de dados:
 ```bash
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
-
-async function main() {
-  // Criação de projetos
-  await prisma.projeto.createMany({
-    data: [
-      { nome: 'Projeto Alpha' },
-      { nome: 'Projeto Beta' },
-      { nome: 'Projeto Gamma' }
-    ]
-  });
-
-  // Criação de funcionários
-  await prisma.funcionario.createMany({
-    data: [
-      {
-        nome: 'João da Silva',
-        salario: '3000',
-        endereco: {
-          create: {
-            rua: 'Rua Exemplo',
-            bairro: 'Bairro Exemplo',
-            numero: 123
-          }
-        },
-        dependentes: {
-          create: [
-            {
-              nome: 'Maria Silva',
-              parentesco: 'Esposa'
-            }
-          ]
-        },
-        projetos: {
-          create: [
-            { projetoId: 1 },
-            { projetoId: 2 }
-          ]
-        }
-      },
-      {
-        nome: 'Ana Pereira',
-        salario: '2500',
-        endereco: {
-          create: {
-            rua: 'Avenida Central',
-            bairro: 'Centro',
-            numero: 456
-          }
-        },
-        dependentes: {
-          create: [
-            {
-              nome: 'Pedro Pereira',
-              parentesco: 'Filho'
-            }
-          ]
-        },
-        projetos: {
-          create: [
-            { projetoId: 2 },
-            { projetoId: 3 }
-          ]
-        }
-      }
-    ]
-  });
-
-  console.log('Seed data inserted');
-}
-
-main()
-  .catch(e => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+npm run seed
 ```
-#### 4.2: Execute o seed com o comando:
-```bash
-npx ts-node prisma/seed.ts
-```
+O comando npm run seed executará o arquivo seed.mts e inserirá os dados iniciais no banco de dados conforme definido no script.
 
-### Passo 5: Criar a Rota da API
-No diretório src/app/api/funcionarios/, crie o arquivo route.ts:
-```bash
-import { NextResponse } from 'next/server';
-import prisma from '@/prismaClient';
-
-export async function POST(request: Request) {
-  try {
-    const { nome, salario, endereco, dependentes, projetos } = await request.json();
-
-    const newFuncionario = await prisma.funcionario.create({
-      data: {
-        nome,
-        salario,
-        endereco: endereco ? {
-          create: endereco
-        } : undefined,
-        dependentes: dependentes ? {
-          create: dependentes
-        } : undefined,
-        projetos: projetos ? {
-          create: projetos.map(projetoId => ({ projetoId }))
-        } : undefined
-      }
-    });
-
-    return NextResponse.json(newFuncionario, { status: 201 });
-  } catch (error) {
-    return NextResponse.json({ error: 'Error creating funcionario' }, { status: 500 });
-  }
-}
-```
-
-### Passo 6: Inicie o Servidor de Desenvolvimento
-Inicie o servidor de desenvolvimento Next.js:
+#### Passo 7: Iniciar o Servidor
+Agora que o banco de dados e as migrações estão prontos, inicie o servidor Next.js para testar a API.
 ```bash
 npm run dev
 ```
-
-### Passo 7: Testar a API
-Para testar a rota POST /api/funcionarios, use cURL ou Insomnia:
+#### Passo 8: Testar a API
+##### 8.1.	Criar Funcionario via API (POST /api/funcionarios):
+Use Postman ou cURL para enviar uma requisição POST e criar um novo funcionário.
+Exemplo de requisição cURL:
 ```bash
 curl -X POST http://localhost:3000/api/funcionarios \
 -H "Content-Type: application/json" \
@@ -248,4 +128,8 @@ curl -X POST http://localhost:3000/api/funcionarios \
   ],
   "projetos": [1, 3]
 }'
+```
+##### 8.2 Testar a Rota GET (Listar Funcionários)
+```bash
+curl -X GET http://localhost:3000/api/funcionarios
 ```

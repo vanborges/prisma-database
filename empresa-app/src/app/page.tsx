@@ -11,6 +11,12 @@ export default function Page() {
       <p className={styles.description}>
         Vamos explorar operações CRUD e como realizar migrações de dados de maneira eficiente em um ambiente de desenvolvimento Next.js.
       </p>
+      <p className={styles.description}>
+        Acesse a documentação da API gerada pelo Swagger clicando no link abaixo:
+      </p>
+      <a href="http://localhost:3000/api/swagger" className={styles.link}>
+        Documentação da API
+      </a>
     </div>
   );
 }

@@ -89,10 +89,16 @@ model FuncioanrioProjeto {
 }
 ```
 #### Passo 5: Gerar migration com base no modelo
-Com o esquema do Prisma configurado, gere a migração e aplique-a ao banco de dados.
+Com o esquema do Prisma configurado execute o seguinte comando:
 ```bash
 npx prisma migrate dev --name init
 ```
+Esse comando realiza as seguintes ações:
+	1.	Compara o estado atual do banco de dados com o esquema definido no Prisma.
+	2.	Gera uma migration e a aplica para sincronizar o banco de dados com o esquema Prisma.
+	3.	Nomeia a migration gerada como ‘init’, o que é útil para identificar o propósito ou estágio das mudanças.
+	4.	Atualiza o cliente Prisma, garantindo que seu código possa interagir corretamente com o banco de dados após as alterações.
+
 #### Passo 6: Popular o Banco de Dados com o Script de Seed
 Para popular o banco de dados com dados iniciais, você pode utilizar o script de seed já configurado. O arquivo de seed está localizado em src/app/seed.mts e contém instruções para inserir dados no banco de dados.
 

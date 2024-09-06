@@ -110,11 +110,23 @@ npm run seed
 O comando npm run seed executará o arquivo seed.mts e inserirá os dados iniciais no banco de dados conforme definido no script.
 
 #### Passo 7: Iniciar o Servidor
-Agora que o banco de dados e as migrações estão prontos, inicie o servidor Next.js para testar a API.
+Agora que o banco de dados está configurado e as migrações foram aplicadas, você pode iniciar o servidor de desenvolvimento do Next.js para testar a API.
+
+##### 7.1.	Inicie o servidor Next.js:
+No terminal, execute o seguinte comando para iniciar o servidor de desenvolvimento:
 ```bash
 npm run dev
 ```
+##### 7.2.	Verifique o servidor:
+Uma vez iniciado, o servidor estará rodando no endereço http://localhost:3000.
+
 #### Passo 8: Testar a API
+A API está configurada no diretório src/app/api. Neste ponto, a aplicação contém uma pasta funcionarios, onde você encontrará as rotas:
+- POST: Para criar novos funcionários.
+- GET: Para listar os funcionários existentes.
+
+Para testar a API, abra um novo terminal ou utilize uma ferramenta como Postman, Insomnia ou cURL para fazer requisições HTTP para os endpoints da API.
+
 ##### 8.1.	Criar Funcionario via API (POST /api/funcionarios):
 Use Postman ou cURL para enviar uma requisição POST e criar um novo funcionário.
 Exemplo de requisição cURL:

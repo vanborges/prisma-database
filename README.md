@@ -55,6 +55,7 @@ model Funcionario {
   projetos    FuncioanrioProjeto[]
 }
 
+// Relacionamento 1:1 - Funcionario:Endereco
 model Endereco {
   id            Int         @id @default(autoincrement())
   rua           String
@@ -63,7 +64,7 @@ model Endereco {
   funcionarioId Int         @unique
   funcionario   Funcionario @relation(fields: [funcionarioId], references: [id], onDelete: Cascade)
 }
-
+// Relacionamento 1:n - Funcionario:Dependente
 model Dependente {
   id            Int         @id @default(autoincrement())
   nome          String
@@ -78,6 +79,7 @@ model Projeto {
   funcionarios  FuncioanrioProjeto[]
 }
 
+// Relacionamento n:n - Funcionario:Projeto
 model FuncioanrioProjeto {
   funcionarioId Int
   projetoId     Int

@@ -122,35 +122,56 @@ Uma vez iniciado, o servidor estará rodando no endereço http://localhost:3000.
 
 #### Passo 8: Testar a API
 A API está configurada no diretório src/app/api. Neste ponto, a aplicação contém uma pasta funcionarios, onde você encontrará as rotas:
+
 - POST: Para criar novos funcionários.
 - GET: Para listar os funcionários existentes.
 
-Para testar a API, abra um novo terminal ou utilize uma ferramenta como Postman, Insomnia ou cURL para fazer requisições HTTP para os endpoints da API.
+Você pode testar a API de duas formas:
 
-##### 8.1.	Criar Funcionario via API (POST /api/funcionarios):
-Use Postman ou cURL para enviar uma requisição POST e criar um novo funcionário.
-Exemplo de requisição cURL:
+- Usando a interface do Swagger UI gerada em http://localhost:3000/api/swagger, onde você pode visualizar e testar todos os endpoints da API de maneira interativa.
+- Usando ferramentas tradicionais como Postman, Insomnia, ou cURL.
+
+##### 8.1. Testar a API via Swagger UI
+
+Para testar a API usando a documentação interativa gerada pelo Swagger UI, siga os passos abaixo:
+
+- Acesse a interface do Swagger UI no navegador:
+```bash
+http://localhost:3000/api/swagger
+```
+
+- Dentro da interface Swagger, você verá a lista de rotas disponíveis, incluindo:
+POST /api/funcionarios para criar um novo funcionário.
+GET /api/funcionarios para listar os funcionários existentes.
+
+- Clique no endpoint desejado e preencha os parâmetros solicitados na interface. Em seguida, clique em Execute para realizar a requisição diretamente pelo Swagger UI.
+
+##### 8.2. Testar API de outras formas
+
+Além do Swagger UI, você pode testar a API usando Postman, Insomnia, ou cURL para enviar uma requisição POST e criar um novo funcionário. Exemplo de requisição cURL:
+
+Testar rota via cURL - POST /api/funcionarios:
 ```bash
 curl -X POST http://localhost:3000/api/funcionarios \
 -H "Content-Type: application/json" \
 -d '{
-  "nome": "Carlos Souza",
-  "salario": "4000",
+  "nome": "Mickey Mouse",
+  "salario": "5000",
   "endereco": {
-    "rua": "Rua Principal",
-    "bairro": "Centro",
-    "numero": 789
+    "rua": "Rua da Diversão",
+    "bairro": "Disneyland",
+    "numero": 123
   },
   "dependentes": [
     {
-      "nome": "Juliana Souza",
-      "parentesco": "Esposa"
+      "nome": "Minnie Mouse",
+      "parentesco": "Namorada"
     }
   ],
-  "projetos": [1, 3]
+  "projetos": [1, 2]
 }'
 ```
-##### 8.2 Testar a Rota GET (Listar Funcionários)
+- Testar a Rota GET (Listar Funcionários)
 ```bash
 curl -X GET http://localhost:3000/api/funcionarios
 ```

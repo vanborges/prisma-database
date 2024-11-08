@@ -46,46 +46,46 @@ npx prisma init
 #### Passo 4: Criar os Modelos:
 No arquivo prisma/schema.prisma, revise e crie novos modelos se necessário. 
 ```bash
-model Funcionario {
+model funcionario {
   id          Int               @id @default(autoincrement())
   nome        String
   salario     String            @default("0")
-  endereco    Endereco?
-  dependentes Dependente[]
-  projetos    FuncioanrioProjeto[]
+  endereco    endereco?
+  dependentes dependente[]
+  projetos    funcioanrioprojeto[]
 }
 
 // Relacionamento 1:1 - Funcionario:Endereco
-model Endereco {
+model endereco {
   id            Int         @id @default(autoincrement())
   rua           String
   bairro        String?
   numero        Int
-  funcionarioId Int         @unique
-  funcionario   Funcionario @relation(fields: [funcionarioId], references: [id], onDelete: Cascade)
+  funcionarioid Int         @unique
+  funcionario   funcionario @relation(fields: [funcionarioid], references: [id], onDelete: Cascade)
 }
 // Relacionamento 1:n - Funcionario:Dependente
-model Dependente {
+model dependente {
   id            Int         @id @default(autoincrement())
   nome          String
   parentesco    String
-  funcionarioId Int
-  funcionario   Funcionario @relation(fields: [funcionarioId], references: [id], onDelete: Cascade)
+  funcionarioid Int
+  funcionario   funcionario @relation(fields: [funcionarioid], references: [id], onDelete: Cascade)
 }
 
-model Projeto {
+model projeto {
   id            Int               @id @default(autoincrement())
   nome          String
-  funcionarios  FuncioanrioProjeto[]
+  funcionarios  funcioanrioprojeto[]
 }
 
 // Relacionamento n:n - Funcionario:Projeto
-model FuncioanrioProjeto {
-  funcionarioId Int
-  projetoId     Int
-  funcionario   Funcionario @relation(fields: [funcionarioId], references: [id])
-  projeto       Projeto     @relation(fields: [projetoId], references: [id])
-  @@id([funcionarioId, projetoId])
+model funcioanrioprojeto {
+  funcionarioid Int
+  projetoid     Int
+  funcionario   funcionario @relation(fields: [funcionarioid], references: [id])
+  projeto       projeto     @relation(fields: [projetoid], references: [id])
+  @@id([funcionarioid, projetoid])
 }
 ```
 #### Passo 5: Gerar migration com base no modelo

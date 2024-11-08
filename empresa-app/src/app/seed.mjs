@@ -34,8 +34,8 @@ async function main() {
       },
       projetos: {
         create: [
-          { projetoId: 1 },
-          { projetoId: 2 }
+          { projeto: { connect: { id: 1 } } },
+          { projeto: { connect: { id: 2 } } }
         ]
       }
     }
@@ -62,8 +62,8 @@ async function main() {
       },
       projetos: {
         create: [
-          { projetoId: 1 },
-          { projetoId: 3 }
+          { projeto: { connect: { id: 1 } } },
+          { projeto: { connect: { id: 3 } } }
         ]
       }
     }

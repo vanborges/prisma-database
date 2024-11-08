@@ -167,7 +167,7 @@ export async function POST(request: Request) {
           : undefined,
         projetos: projetos
           ? {
-              create: projetos.map((projetoId: any) => ({ projetoId })),
+              create: projetos.map((projetoid: any) => ({ projetoid })),
             }
           : undefined,
       },
@@ -286,7 +286,7 @@ export async function GET() {
         dependentes: true,
         projetos: {
           include: {
-            projeto: true, // Inclua detalhes do projeto se necessário
+            projeto: true,
           },
         },
       },

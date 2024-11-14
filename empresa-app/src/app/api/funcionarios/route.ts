@@ -17,26 +17,26 @@ import prisma from '../../lib/PrismaClient';
  *               nome:
  *                 type: string
  *                 description: Nome do funcionário
- *                 example: "Mickey Mouse"
+ *                 example: "Pateta"
  *               salario:
- *                 type: string
+ *                 type: Decimal
  *                 description: Salário do funcionário
- *                 example: "3000"
+ *                 example: 7000
  *               endereco:
  *                 type: object
  *                 properties:
  *                   rua:
  *                     type: string
  *                     description: Rua do endereço
- *                     example: "Rua da Diversão"
+ *                     example: "Rua do Encanto"
  *                   bairro:
  *                     type: string
  *                     description: Bairro do endereço
- *                     example: "Land of Magic"
+ *                     example: "Toon Town"
  *                   numero:
  *                     type: integer
  *                     description: Número do endereço
- *                     example: 123
+ *                     example: 777
  *               dependentes:
  *                 type: array
  *                 items:
@@ -45,17 +45,17 @@ import prisma from '../../lib/PrismaClient';
  *                     nome:
  *                       type: string
  *                       description: Nome do dependente
- *                       example: "Minnie Mouse"
+ *                       example: "Max"
  *                     parentesco:
  *                       type: string
  *                       description: Parentesco com o funcionário
- *                       example: "Namorada"
+ *                       example: "Filho"
  *               projetos:
  *                 type: array
  *                 items:
  *                   type: integer
  *                   description: ID do projeto
- *                   example: 1
+ *                   example: 3
  *     responses:
  *       201:
  *         description: Funcionário criado com sucesso
@@ -71,11 +71,11 @@ import prisma from '../../lib/PrismaClient';
  *                 nome:
  *                   type: string
  *                   description: Nome do funcionário
- *                   example: "Mickey Mouse"
+ *                   example: "Pateta"
  *                 salario:
- *                   type: string
+ *                   type: Decimal
  *                   description: Salário do funcionário
- *                   example: "3000"
+ *                   example: 7000
  *                 endereco:
  *                   type: object
  *                   properties:
@@ -86,16 +86,16 @@ import prisma from '../../lib/PrismaClient';
  *                     rua:
  *                       type: string
  *                       description: Rua do endereço
- *                       example: "Rua da Diversão"
+ *                       example: "Rua do Encanto"
  *                     bairro:
  *                       type: string
  *                       description: Bairro do endereço
- *                       example: "Land of Magic"
+ *                       example: "Toon Town"
  *                     numero:
  *                       type: integer
  *                       description: Número do endereço
- *                       example: 123
- *                     funcionarioId:
+ *                       example: 777
+ *                     funcionarioid:
  *                       type: integer
  *                       description: ID do funcionário associado
  *                       example: 1
@@ -111,12 +111,12 @@ import prisma from '../../lib/PrismaClient';
  *                       nome:
  *                         type: string
  *                         description: Nome do dependente
- *                         example: "Minnie Mouse"
+ *                         example: "Max"
  *                       parentesco:
  *                         type: string
  *                         description: Parentesco com o funcionário
- *                         example: "Namorada"
- *                       funcionarioId:
+ *                         example: "Filho"
+ *                       funcionarioid:
  *                         type: integer
  *                         description: ID do funcionário associado
  *                         example: 1
@@ -125,11 +125,11 @@ import prisma from '../../lib/PrismaClient';
  *                   items:
  *                     type: object
  *                     properties:
- *                       funcionarioId:
+ *                       funcionarioid:
  *                         type: integer
  *                         description: ID do funcionário associado
  *                         example: 1
- *                       projetoId:
+ *                       projetoid:
  *                         type: integer
  *                         description: ID do projeto
  *                         example: 1
@@ -143,7 +143,7 @@ import prisma from '../../lib/PrismaClient';
  *                           nome:
  *                             type: string
  *                             description: Nome do projeto
- *                             example: "Mickey e Amigos"
+ *                             example: "Pateta"
  *       500:
  *         description: Erro ao criar o funcionário
  */

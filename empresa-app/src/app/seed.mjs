@@ -16,7 +16,7 @@ async function main() {
   await prisma.funcionario.create({
     data: {
       nome: 'Mickey Mouse',
-      salario: '3000',
+      salario: 3000,
       endereco: {
         create: {
           rua: 'Rua da Diversão',
@@ -44,7 +44,7 @@ async function main() {
   await prisma.funcionario.create({
     data: {
       nome: 'Donald Duck',
-      salario: '2500',
+      salario: 2500,
       endereco: {
         create: {
           rua: 'Avenida Alegria',

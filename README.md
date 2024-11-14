@@ -58,10 +58,10 @@ No arquivo prisma/schema.prisma, revise e crie novos modelos se necessário.
 model funcionario {
   id          Int               @id @default(autoincrement())
   nome        String
-  salario     String            @default("0")
+  salario     Decimal            @default(0)
   endereco    endereco?
   dependentes dependente[]
-  projetos    funcioanrioprojeto[]
+  projetos    funcionarioprojeto[]
 }
 
 // Relacionamento 1:1 - Funcionario:Endereco
@@ -85,11 +85,11 @@ model dependente {
 model projeto {
   id            Int               @id @default(autoincrement())
   nome          String
-  funcionarios  funcioanrioprojeto[]
+  funcionarios  funcionarioprojeto[]
 }
 
 // Relacionamento n:n - Funcionario:Projeto
-model funcioanrioprojeto {
+model funcionarioprojeto {
   funcionarioid Int
   projetoid     Int
   funcionario   funcionario @relation(fields: [funcionarioid], references: [id])

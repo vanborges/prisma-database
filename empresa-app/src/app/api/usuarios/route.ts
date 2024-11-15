@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "../../lib/PrismaClient";
-
+import bcrypt from "bcrypt";
 /**
  * @swagger
  * tags:
@@ -39,13 +39,14 @@ export async function GET() {
   }
 }
 
+
 /**
  * @swagger
  * /api/usuarios:
  *   post:
  *     summary: Cria um novo usuário
  *     tags: [Usuários]
- *     description: Adiciona um novo usuário ao banco de dados, incluindo seu perfil de configuração e contas.
+ *     description: Adiciona um novo usuário ao banco de dados, incluindo os detalhes do perfil e configurações adicionais.
  *     requestBody:
  *       required: true
  *       content:
@@ -61,6 +62,23 @@ export async function GET() {
  *                 type: string
  *                 description: Email do usuário
  *                 example: "johndoe@example.com"
+ *               senha:
+ *                 type: string
+ *                 description: Senha do usuário (será criptografada)
+ *                 example: "minhaSenhaSegura123"
+ *               role:
+ *                 type: string
+ *                 description: Papel do usuário no sistema
+ *                 enum: [ADMIN, USER]
+ *                 example: "USER"
+ *               verificado:
+ *                 type: boolean
+ *                 description: Status de verificação do usuário
+ *                 example: false
+ *               ativo:
+ *                 type: boolean
+ *                 description: Status de ativação do usuário
+ *                 example: true
  *               perfilDeConfiguracao:
  *                 type: object
  *                 properties:
@@ -75,22 +93,58 @@ export async function GET() {
  *     responses:
  *       200:
  *         description: Usuário criado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   description: ID do usuário recém-criado
+ *                   example: 1
+ *                 nomeDeUsuario:
+ *                   type: string
+ *                   description: Nome de usuário
+ *                   example: "johndoe"
+ *                 email:
+ *                   type: string
+ *                   description: Email do usuário
+ *                   example: "johndoe@example.com"
+ *                 role:
+ *                   type: string
+ *                   description: Papel do usuário
+ *                   example: "USER"
+ *                 verificado:
+ *                   type: boolean
+ *                   description: Status de verificação do usuário
+ *                   example: false
+ *                 ativo:
+ *                   type: boolean
+ *                   description: Status de ativação do usuário
+ *                   example: true
+ *                 criadoEm:
+ *                   type: string
+ *                   format: date-time
+ *                   description: Data de criação do usuário
+ *                   example: "2024-11-15T22:46:44.204Z"
  *       500:
  *         description: Erro ao criar usuário
  */
+
 export async function POST(request: Request) {
   try {
-    const { nomeDeUsuario, email, perfilDeConfiguracao } = await request.json();
+    const { nomeDeUsuario, email, senha, role, verificado, ativo } = await request.json();
+
+    const senhaCriptografada = await bcrypt.hash(senha, 10);
 
     const novoUsuario = await prisma.usuario.create({
       data: {
         nomeDeUsuario,
         email,
-        perfilDeConfiguracao: perfilDeConfiguracao
-          ? {
-              create: perfilDeConfiguracao,
-            }
-          : undefined,
+        senha: senhaCriptografada,
+        role,
+        verificado,
+        ativo,
       },
     });
 
@@ -102,6 +156,7 @@ export async function POST(request: Request) {
     );
   }
 }
+
 
 /**
  * @swagger

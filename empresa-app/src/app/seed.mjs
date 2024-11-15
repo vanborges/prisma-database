@@ -1,8 +1,12 @@
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
 async function main() {
+  // Criptografando a senha do usuário
+  const senhaCriptografada = await bcrypt.hash('admin', 10);
+
   // Criação de um usuário e associando uma conta a ele
   const usuario = await prisma.usuario.upsert({
     where: { nomeDeUsuario: 'johndoe' },
@@ -10,6 +14,10 @@ async function main() {
     create: {
       nomeDeUsuario: 'johndoe',
       email: 'johndoe@example.com',
+      senha: senhaCriptografada, // Adicionando a senha criptografada
+      role: 'USER',              // Definindo o papel como USER
+      verificado: true,           // Definindo como verificado
+      ativo: true,                // Definindo como ativo
       perfilDeConfiguracao: {
         create: {
           notificacoesAtivadas: true,

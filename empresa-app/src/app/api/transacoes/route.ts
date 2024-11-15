@@ -8,6 +8,7 @@ import prisma from "../../lib/PrismaClient";
  *     description: Operações relacionadas às transações
  */
 
+// Criação de uma nova transação
 /**
  * @swagger
  * /api/transacoes:
@@ -42,6 +43,8 @@ import prisma from "../../lib/PrismaClient";
  *     responses:
  *       200:
  *         description: Transação criada com sucesso
+ *       400:
+ *         description: Dados incompletos para criar transação
  *       500:
  *         description: Erro ao criar transação
  */
@@ -73,6 +76,7 @@ export async function POST(request: Request) {
   }
 }
 
+// Listagem de todas as transações
 /**
  * @swagger
  * /api/transacoes:
@@ -96,6 +100,7 @@ export async function GET() {
 
     return NextResponse.json(transacoes, { status: 200 });
   } catch (error) {
+    console.error("Erro ao buscar transações:", error);
     return NextResponse.json(
       { error: "Erro ao buscar transações" },
       { status: 500 }
@@ -103,6 +108,7 @@ export async function GET() {
   }
 }
 
+// Atualização de uma transação
 /**
  * @swagger
  * /api/transacoes?id={id}:
@@ -167,6 +173,7 @@ export async function PUT(request: Request) {
 
     return NextResponse.json(transacaoAtualizada, { status: 200 });
   } catch (error) {
+    console.error("Erro ao atualizar transação:", error);
     return NextResponse.json(
       { error: "Erro ao atualizar transação" },
       { status: 500 }
@@ -174,6 +181,7 @@ export async function PUT(request: Request) {
   }
 }
 
+// Exclusão de uma transação
 /**
  * @swagger
  * /api/transacoes?id={id}:
@@ -191,8 +199,10 @@ export async function PUT(request: Request) {
  *     responses:
  *       200:
  *         description: Transação removida com sucesso
- *       404:
+ *       400:
  *         description: ID da transação não fornecido
+ *       404:
+ *         description: Transação não encontrada
  *       500:
  *         description: Erro ao remover transação
  */
@@ -217,6 +227,7 @@ export async function DELETE(request: Request) {
       { status: 200 }
     );
   } catch (error) {
+    console.error("Erro ao remover transação:", error);
     return NextResponse.json(
       { error: "Erro ao remover transação" },
       { status: 500 }

@@ -1,12 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link"; // Importando o Link para navegação interna
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const router = useRouter();
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -28,6 +30,7 @@ export default function LoginPage() {
 
       console.log("Login bem-sucedido");
       setErrorMessage(""); // Limpa a mensagem de erro em caso de sucesso
+      router.push("/pages/dashboard"); // Redireciona para o dashboard após login bem-sucedido
     } catch (error) {
       console.error("Erro ao fazer login:", error);
       setErrorMessage("Erro ao fazer login");
@@ -39,6 +42,7 @@ export default function LoginPage() {
       <div style={styles.loginBox}>
         <h2 style={styles.title}>Controle Financeiro</h2>
         <form onSubmit={handleLogin} style={styles.form}>
+          {errorMessage && <p style={styles.error}>{errorMessage}</p>} {/* Mensagem de erro acima do formulário */}
           <input
             type="email"
             placeholder="E-mail"
@@ -59,7 +63,6 @@ export default function LoginPage() {
             Entrar
           </button>
         </form>
-        {errorMessage && <p style={styles.error}>{errorMessage}</p>}
         <p style={styles.registerText}>
           Não tem uma conta?{" "}
           <Link href="/pages/usuarios/register" style={styles.registerLink}>
@@ -121,7 +124,7 @@ const styles = {
   error: {
     color: "red",
     fontSize: "14px",
-    marginTop: "10px",
+    marginBottom: "10px", // Ajuste para posicionar a mensagem de erro acima dos campos
   },
   registerText: {
     marginTop: "15px",

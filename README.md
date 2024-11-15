@@ -107,7 +107,7 @@ Este projeto visa criar um sistema de controle financeiro utilizando Next.js par
 
 ### Trigger de Log para Transações
 
-- Comando para criar a trigger
+- Comando para criar a trigger e a tabela de logs
 
 ```
 -- Criação da tabela de logs

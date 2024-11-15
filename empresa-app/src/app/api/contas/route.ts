@@ -44,6 +44,7 @@ export async function POST(request: Request) {
   try {
     const { usuarioId, tipoDeConta, saldo } = await request.json();
 
+    // Verifica se todos os dados necessários foram fornecidos
     if (!usuarioId || !tipoDeConta || saldo === undefined) {
       return NextResponse.json(
         { error: "Dados incompletos para criar conta" },
@@ -62,7 +63,10 @@ export async function POST(request: Request) {
 
     return NextResponse.json(novaConta, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ error: "Erro ao criar conta" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Erro ao criar conta" },
+      { status: 500 }
+    );
   }
 }
 

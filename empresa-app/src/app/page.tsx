@@ -15,6 +15,7 @@ export default function Page() {
         Acesse a documentação da API gerada pelo Swagger clicando no link abaixo:
       </p>
       <a href="http://localhost:3000/api/swagger" className={styles.link}>
+      
         Documentação da API
       </a>
     </div>

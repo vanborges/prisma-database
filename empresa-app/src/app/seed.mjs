@@ -3,9 +3,11 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  // Criação de usuários
-  await prisma.usuario.create({
-    data: {
+  // Criação de um usuário e associando uma conta a ele
+  const usuario = await prisma.usuario.upsert({
+    where: { nomeDeUsuario: 'johndoe' },
+    update: {},
+    create: {
       nomeDeUsuario: 'johndoe',
       email: 'johndoe@example.com',
       perfilDeConfiguracao: {
@@ -14,45 +16,47 @@ async function main() {
           moedaPreferida: 'BRL',
         },
       },
-      contas: {
+    },
+  });
+
+  // Associando uma conta ao usuário criado
+  const conta = await prisma.conta.create({
+    data: {
+      usuarioId: usuario.id, // Associando ao id do usuário criado
+      tipoDeConta: 'Corrente',
+      saldo: 1000,
+      criadoEm: new Date(),
+      transacoes: {
         create: [
           {
-            tipoDeConta: 'Corrente',
-            saldo: 1000,
-            transacoes: {
+            valor: -100,
+            dataTransacao: new Date(),
+            descricao: 'Compra de supermercado',
+            categorias: {
               create: [
                 {
-                  valor: -100,
-                  dataTransacao: new Date(),
-                  descricao: 'Compra de supermercado',
-                  categorias: {
-                    create: [
-                      {
-                        categoria: {
-                          connectOrCreate: {
-                            where: { nomeDaCategoria: 'Alimentação' },
-                            create: { nomeDaCategoria: 'Alimentação' },
-                          },
-                        },
-                      },
-                    ],
+                  categoria: {
+                    connectOrCreate: {
+                      where: { nomeDaCategoria: 'Alimentação' },
+                      create: { nomeDaCategoria: 'Alimentação' },
+                    },
                   },
                 },
+              ],
+            },
+          },
+          {
+            valor: 500,
+            dataTransacao: new Date(),
+            descricao: 'Salário',
+            categorias: {
+              create: [
                 {
-                  valor: 500,
-                  dataTransacao: new Date(),
-                  descricao: 'Salário',
-                  categorias: {
-                    create: [
-                      {
-                        categoria: {
-                          connectOrCreate: {
-                            where: { nomeDaCategoria: 'Renda' },
-                            create: { nomeDaCategoria: 'Renda' },
-                          },
-                        },
-                      },
-                    ],
+                  categoria: {
+                    connectOrCreate: {
+                      where: { nomeDaCategoria: 'Renda' },
+                      create: { nomeDaCategoria: 'Renda' },
+                    },
                   },
                 },
               ],
@@ -67,7 +71,7 @@ async function main() {
 }
 
 main()
-  .catch(e => {
+  .catch((e) => {
     console.error(e);
     process.exit(1);
   })

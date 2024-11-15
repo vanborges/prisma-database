@@ -3,73 +3,67 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  // Criação de projetos
-  await prisma.projeto.createMany({
-    data: [
-      { nome: 'Mickey e Amigos' },
-      { nome: 'Disney Princesses' },
-      { nome: 'Pixar Adventures' }
-    ]
-  });
-
-  // Criação de funcionários
-  await prisma.funcionario.create({
+  // Criação de usuários
+  await prisma.usuario.create({
     data: {
-      nome: 'Mickey Mouse',
-      salario: 3000,
-      endereco: {
+      nomeDeUsuario: 'johndoe',
+      email: 'johndoe@example.com',
+      perfilDeConfiguracao: {
         create: {
-          rua: 'Rua da Diversão',
-          bairro: 'Land of Magic',
-          numero: 123
-        }
+          notificacoesAtivadas: true,
+          moedaPreferida: 'BRL',
+        },
       },
-      dependentes: {
+      contas: {
         create: [
           {
-            nome: 'Minnie Mouse',
-            parentesco: 'Namorada'
-          }
-        ]
+            tipoDeConta: 'Corrente',
+            saldo: 1000,
+            transacoes: {
+              create: [
+                {
+                  valor: -100,
+                  dataTransacao: new Date(),
+                  descricao: 'Compra de supermercado',
+                  categorias: {
+                    create: [
+                      {
+                        categoria: {
+                          connectOrCreate: {
+                            where: { nomeDaCategoria: 'Alimentação' },
+                            create: { nomeDaCategoria: 'Alimentação' },
+                          },
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  valor: 500,
+                  dataTransacao: new Date(),
+                  descricao: 'Salário',
+                  categorias: {
+                    create: [
+                      {
+                        categoria: {
+                          connectOrCreate: {
+                            where: { nomeDaCategoria: 'Renda' },
+                            create: { nomeDaCategoria: 'Renda' },
+                          },
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
       },
-      projetos: {
-        create: [
-          { projeto: { connect: { id: 1 } } },
-          { projeto: { connect: { id: 2 } } }
-        ]
-      }
-    }
+    },
   });
 
-  await prisma.funcionario.create({
-    data: {
-      nome: 'Donald Duck',
-      salario: 2500,
-      endereco: {
-        create: {
-          rua: 'Avenida Alegria',
-          bairro: 'Happyland',
-          numero: 456
-        }
-      },
-      dependentes: {
-        create: [
-          {
-            nome: 'Daisy Duck',
-            parentesco: 'Namorada'
-          }
-        ]
-      },
-      projetos: {
-        create: [
-          { projeto: { connect: { id: 1 } } },
-          { projeto: { connect: { id: 3 } } }
-        ]
-      }
-    }
-  });
-
-  console.log('Dados inseridos com sucesso!');
+  console.log('Dados financeiros inseridos com sucesso!');
 }
 
 main()

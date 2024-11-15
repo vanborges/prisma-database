@@ -1,17 +1,17 @@
-import swaggerJSDoc, { Options } from 'swagger-jsdoc';
+import swaggerJsDoc from 'swagger-jsdoc';
 
-const options: Options = {
+const options = {
   definition: {
-    openapi: '3.0.0', // Especifique a versão do OpenAPI aqui
+    openapi: '3.0.0',
     info: {
-      title: 'API de Funcionários',
+      title: 'API de Controle Financeiro',
       version: '1.0.0',
-      description: 'API para gerenciar funcionários',
+      description: 'API para gerenciar usuários, contas, transações e categorias de transações',
     },
   },
-  apis: ['./src/app/api/**/*.ts'], // Caminho para os arquivos de rotas da API
+  apis: ['./src/app/api/**/*.ts'], // Caminho para os arquivos de rotas documentados
 };
 
-const swaggerSpec = swaggerJSDoc(options);
+const swaggerSpec = swaggerJsDoc(options);
 
 export default swaggerSpec;

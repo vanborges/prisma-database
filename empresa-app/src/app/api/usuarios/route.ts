@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "../../lib/PrismaClient";
+
 /**
  * @swagger
  * tags:
@@ -104,14 +105,14 @@ export async function POST(request: Request) {
 
 /**
  * @swagger
- * /api/usuarios/{id}:
+ * /api/usuarios?id={id}:
  *   put:
  *     summary: Atualiza um usuário
  *     tags: [Usuários]
  *     description: Atualiza as informações de um usuário específico.
  *     parameters:
  *       - name: id
- *         in: path
+ *         in: query
  *         required: true
  *         description: ID do usuário a ser atualizado
  *         schema:
@@ -142,19 +143,18 @@ export async function POST(request: Request) {
  *         description: Erro ao atualizar usuário
  */
 export async function PUT(request: Request) {
-  // vou receber o id do usuário que quero atualizar
   const { searchParams } = new URL(request.url);
   const id = searchParams.get("id");
-  // se não tiver id, retorno erro
+
   if (!id) {
     return NextResponse.json(
       { error: "ID do usuário não fornecido" },
       { status: 400 }
     );
   }
-  // recebo os dados que quero atualizar
+
   const { nomeDeUsuario, email } = await request.json();
-  // tento atualizar o usuário
+
   try {
     const usuarioAtualizado = await prisma.usuario.update({
       where: { id: Number(id) },
@@ -172,14 +172,14 @@ export async function PUT(request: Request) {
 
 /**
  * @swagger
- * /api/usuarios/{id}:
+ * /api/usuarios?id={id}:
  *   delete:
  *     summary: Remove um usuário
  *     tags: [Usuários]
  *     description: Remove um usuário específico do banco de dados.
  *     parameters:
  *       - name: id
- *         in: path
+ *         in: query
  *         required: true
  *         description: ID do usuário a ser removido
  *         schema:
@@ -192,25 +192,30 @@ export async function PUT(request: Request) {
  *       500:
  *         description: Erro ao remover usuário
  */
-// Remove um usuário específico
 export async function DELETE(request: Request) {
-  // Obtém o ID do usuário a partir dos parâmetros da URL
   const { searchParams } = new URL(request.url);
   const id = searchParams.get("id");
 
-  // Verifica se o ID foi fornecido
   if (!id) {
-    return NextResponse.json({ error: 'ID do usuário não fornecido' }, { status: 400 });
+    return NextResponse.json(
+      { error: "ID do usuário não fornecido" },
+      { status: 400 }
+    );
   }
 
   try {
-    // Tenta remover o usuário com o ID fornecido
     await prisma.usuario.delete({
       where: { id: Number(id) },
     });
 
-    return NextResponse.json({ message: 'Usuário removido com sucesso' }, { status: 200 });
+    return NextResponse.json(
+      { message: "Usuário removido com sucesso" },
+      { status: 200 }
+    );
   } catch (error) {
-    return NextResponse.json({ error: 'Erro ao remover usuário' }, { status: 500 });
+    return NextResponse.json(
+      { error: "Erro ao remover usuário" },
+      { status: 500 }
+    );
   }
 }

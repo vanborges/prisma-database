@@ -1,4 +1,4 @@
-import { DataGrid, GridFooter } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridFooter } from "@mui/x-data-grid";
 
 interface TransactionTableProps {
   transactions: {
@@ -10,20 +10,20 @@ interface TransactionTableProps {
 }
 
 export default function TransactionTable({ transactions }: TransactionTableProps) {
-  const columns = [
-    { field: "descricao", headerName: "Description", width: 200 },
+  const columns: GridColDef[] = [
+    { field: "descricao", headerName: "Descrição", width: 200 },
     { 
       field: "valor", 
-      headerName: "Value", 
+      headerName: "Valor", 
       width: 150,
-      renderCell: (params: { value: { toLocaleString: (arg0: string, arg1: { style: string; currency: string; }) => any; }; }) =>
+      renderCell: (params) =>
         params.value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }),
     },
     { 
       field: "tipoDeTransacao", 
-      headerName: "Type", 
+      headerName: "Tipo de Transação", 
       width: 150,
-      renderCell: (params: { value: string; }) =>
+      renderCell: (params) =>
         params.value === "ENTRADA" ? "✅ Entrada" : "❌ Saída",
     },
   ];
@@ -35,8 +35,8 @@ export default function TransactionTable({ transactions }: TransactionTableProps
         columns={columns}
         pagination
         pageSizeOptions={[5, 10, 20]} // Page size options
-        components={{
-          Footer: () => (
+        slots={{
+          footer: () => (
             <GridFooter
               sx={{
                 display: "flex",

@@ -6,7 +6,13 @@ export default function Dashboard() {
   const [entradas, setEntradas] = useState(0);
   const [saidas, setSaidas] = useState(0);
   const [total, setTotal] = useState(0);
-  const [transacoes, setTransacoes] = useState([]);
+  interface Transacao {
+    id: number;
+    descricao: string;
+    valor: number;
+  }
+
+  const [transacoes, setTransacoes] = useState<Transacao[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -72,7 +78,7 @@ const styles = {
     backgroundColor: "#f4f6f8",
   },
   title: {
-    textAlign: "center",
+    textAlign: "center" as "center",
     color: "#2c6e49",
     marginBottom: "20px",
   },
@@ -94,7 +100,7 @@ const styles = {
   },
   table: {
     width: "100%",
-    borderCollapse: "collapse",
+    borderCollapse: "collapse" as "collapse",
     marginTop: "20px",
   },
   th: {

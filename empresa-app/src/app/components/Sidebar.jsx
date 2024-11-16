@@ -19,9 +19,6 @@ export default function Sidebar() {
           <Link href="/dashboard/transacoes">Transações</Link>
         </li>
         <li>
-          <Link href="/dashboard/contas">Contas</Link>
-        </li>
-        <li>
           <Link href="/dashboard/contas-a-receber">Contas a Receber</Link>
         </li>
         <li>

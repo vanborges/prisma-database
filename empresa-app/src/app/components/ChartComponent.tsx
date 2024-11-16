@@ -17,7 +17,9 @@ function ChartComponent({ entradas, saidas }: ChartComponentProps) {
       <YAxis />
       <Tooltip />
       <Legend />
-      <Bar dataKey="value" fill="#8884d8" />
+      <Bar dataKey="value" name={"Valor"} fill="#8884d8" />
+      {/* titulo do grafico */}
+      
     </BarChart>
   );
 }

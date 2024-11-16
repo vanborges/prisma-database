@@ -1,49 +1,45 @@
-/* Sidebar.module.css */
 .sidebar {
   width: 250px;
-  height: 100vh;
   background-color: #2c6e49;
-  color: #fff;
-  display: flex;
-  flex-direction: column;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
   padding: 20px;
+  color: white;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }
 
 .title {
-  font-size: 24px;
+  font-size: 18px;
   margin-bottom: 20px;
 }
 
 .navList {
   list-style: none;
   padding: 0;
-  margin: 0;
 }
 
 .navList li {
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 
-.navList a,
-.navList button {
-  display: block;
+.navList a {
   text-decoration: none;
-  color: #fff;
-  padding: 10px 15px;
-  border-radius: 4px;
-  background-color: #1b4332;
-  border: none;
-  text-align: left;
-  cursor: pointer;
-  transition: background-color 0.3s;
+  color: white;
 }
 
-.navList a:hover,
-.navList button:hover {
-  background-color: #14532d;
-}
-
-.navList button {
+.button {
   width: 100%;
-  font-size: 16px;
+  background-color: #f5f5f5;
+  color: #2c6e49;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.button:hover {
+  background-color: #d4d4d4;
 }

@@ -16,29 +16,20 @@ export default function Sidebar({ openModal }: SidebarProps) {
           <Link href="/dashboard">Dashboard</Link>
         </li>
         <li>
-          <Link href="/dashboard/transacoes">Transações</Link>
-        </li>
-        <li>
-          <button
-            className={styles.button}
-            onClick={() => openModal("pagar")}
-          >
+          <button className={styles.button} onClick={() => openModal("pagar")}>
             Contas a Pagar
           </button>
         </li>
         <li>
-          <button
-            className={styles.button}
-            onClick={() => openModal("receber")}
-          >
+          <button className={styles.button} onClick={() => openModal("receber")}>
             Contas a Receber
           </button>
         </li>
         <li>
-          <Link href="/dashboard/categorias">Categorias</Link>
+          <Link href="/categorias">Categorias</Link>
         </li>
         <li>
-          <Link href="/dashboard/configuracoes">Configurações</Link>
+          <Link href="/configuracoes">Configurações</Link>
         </li>
       </ul>
     </div>

@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from "react";
 import Modal from "../../components/modal/Modal";
+import Notification from "../../components/notifications/Notification"; // Importe o componente de notificação
 
 interface ModalProps {
   title: string;
   isOpen: boolean;
   onClose: () => void;
   tipoTransacao: "pagar" | "receber";
-  onTransactionSuccess: () => void; // Callback para atualizar dados
+  onTransactionSuccess: () => void; // Callback para atualizar os dados no dashboard
 }
 
 export default function TransacoesModal({
@@ -25,6 +26,10 @@ export default function TransacoesModal({
     contaId: "",
   });
   const [contas, setContas] = useState<{ id: number; tipoDeConta: string }[]>([]);
+  const [notification, setNotification] = useState<{
+    message: string;
+    type: "success" | "error";
+  } | null>(null); // Estado para gerenciar notificações
 
   // Busca as contas ao abrir o modal
   useEffect(() => {
@@ -58,7 +63,10 @@ export default function TransacoesModal({
     e.preventDefault();
 
     if (!formData.contaId) {
-      console.error("Conta inválida selecionada.");
+      setNotification({
+        message: "Por favor, selecione uma conta válida.",
+        type: "error",
+      });
       return;
     }
 
@@ -80,19 +88,43 @@ export default function TransacoesModal({
       });
 
       if (response.ok) {
+        setNotification({
+          message: "Transação adicionada com sucesso!",
+          type: "success",
+        });
+
+        // Limpa os campos do formulário
         setFormData({ descricao: "", valor: "", data: "", contaId: "" });
-        onTransactionSuccess(); // Atualiza os dados na página
-        onClose(); // Fecha o modal
+
+        // Aguarda 1500ms antes de fechar o modal e atualizar os dados
+        setTimeout(() => {
+          onTransactionSuccess(); // Atualiza os dados no dashboard
+          setNotification(null); // Remove a notificação
+          onClose(); // Fecha o modal
+        }, 1500);
       } else {
-        console.error("Erro ao salvar transação.");
+        throw new Error("Erro ao salvar transação.");
       }
     } catch (error) {
       console.error("Erro ao salvar transação:", error);
+      setNotification({
+        message: "Erro ao adicionar a transação. Tente novamente.",
+        type: "error",
+      });
     }
   };
 
   return (
     <Modal title={title} isOpen={isOpen} onClose={onClose}>
+      {/* Notificação */}
+      {notification && (
+        <Notification
+          message={notification.message}
+          type={notification.type}
+          onClose={() => setNotification(null)}
+        />
+      )}
+
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: "10px" }}>
           <label htmlFor="contaId">Conta:</label>

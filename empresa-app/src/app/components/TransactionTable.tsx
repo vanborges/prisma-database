@@ -1,59 +1,55 @@
-// components/TransactionTable.tsx
-interface Transaction {
+import { DataGrid, GridFooter } from "@mui/x-data-grid";
+
+interface TransactionTableProps {
+  transactions: {
     id: number;
     descricao: string;
     valor: number;
     tipoDeTransacao: string;
-  }
-  
-  interface TransactionTableProps {
-    transactions: Transaction[];
-  }
-  
-  export default function TransactionTable({ transactions }: TransactionTableProps) {
-    return (
-      <table style={styles.table}>
-        <thead>
-          <tr>
-            <th style={styles.th}>Descrição</th>
-            <th style={styles.th}>Valor</th>
-            <th style={styles.th}>Tipo</th>
-          </tr>
-        </thead>
-        <tbody>
-          {transactions.map((t) => (
-            <tr key={t.id}>
-              <td style={styles.td}>{t.descricao}</td>
-              <td style={styles.td}>
-                {Number(t.valor).toLocaleString("pt-BR", {
-                  style: "currency",
-                  currency: "BRL",
-                })}
-              </td>
-              <td style={styles.td}>
-                {t.tipoDeTransacao === "ENTRADA" ? "✅ Entrada" : "❌ Saída"}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    );
-  }
-  
-  const styles = {
-    table: {
-      width: "100%",
-      borderCollapse: "collapse" as const,
-      marginTop: "20px",
+  }[];
+}
+
+export default function TransactionTable({ transactions }: TransactionTableProps) {
+  const columns = [
+    { field: "descricao", headerName: "Description", width: 200 },
+    { 
+      field: "valor", 
+      headerName: "Value", 
+      width: 150,
+      renderCell: (params: { value: { toLocaleString: (arg0: string, arg1: { style: string; currency: string; }) => any; }; }) =>
+        params.value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }),
     },
-    th: {
-      backgroundColor: "#2c6e49",
-      color: "#ffffff",
-      padding: "10px",
+    { 
+      field: "tipoDeTransacao", 
+      headerName: "Type", 
+      width: 150,
+      renderCell: (params: { value: string; }) =>
+        params.value === "ENTRADA" ? "✅ Entry" : "❌ Exit",
     },
-    td: {
-      padding: "10px",
-      textAlign: "center" as const,
-    },
-  };
-  
+  ];
+
+  return (
+    <div style={{ height: 600, width: "30%", marginLeft: 120 }}>
+      <DataGrid
+        rows={transactions}
+        columns={columns}
+        pagination
+        pageSizeOptions={[5, 10, 20]} // Page size options
+        components={{
+          Footer: () => (
+            <GridFooter
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                backgroundColor: "#f4f4f4",
+                padding: "10px",
+              }}
+            >
+              <span>Customized with ❤️ - Financial Control</span>
+            </GridFooter>
+          ),
+        }}
+      />
+    </div>
+  );
+}

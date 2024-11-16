@@ -27,8 +27,10 @@ import prisma from "../../lib/PrismaClient";
  *                 description: Nome da categoria de transação
  *                 example: "Alimentação"
  *     responses:
- *       200:
+ *       201:
  *         description: Categoria criada com sucesso
+ *       400:
+ *         description: Nome da categoria é obrigatório ou já existe
  *       500:
  *         description: Erro ao criar categoria
  */
@@ -43,6 +45,17 @@ export async function POST(request: Request) {
       );
     }
 
+    const categoriaExistente = await prisma.categoriaDeTransacao.findUnique({
+      where: { nomeDaCategoria },
+    });
+
+    if (categoriaExistente) {
+      return NextResponse.json(
+        { error: "Categoria já existe" },
+        { status: 400 }
+      );
+    }
+
     const novaCategoria = await prisma.categoriaDeTransacao.create({
       data: {
         nomeDaCategoria,
@@ -50,7 +63,7 @@ export async function POST(request: Request) {
       },
     });
 
-    return NextResponse.json(novaCategoria, { status: 200 });
+    return NextResponse.json(novaCategoria, { status: 201 });
   } catch (error) {
     return NextResponse.json(
       { error: "Erro ao criar categoria" },
@@ -113,7 +126,7 @@ export async function GET() {
  *       200:
  *         description: Categoria atualizada com sucesso
  *       400:
- *         description: ID da categoria não fornecido
+ *         description: ID da categoria não fornecido ou nome já em uso
  *       404:
  *         description: Categoria não encontrada
  *       500:
@@ -132,6 +145,17 @@ export async function PUT(request: Request) {
 
   try {
     const { nomeDaCategoria } = await request.json();
+
+    const categoriaExistente = await prisma.categoriaDeTransacao.findUnique({
+      where: { nomeDaCategoria },
+    });
+
+    if (categoriaExistente && categoriaExistente.id !== Number(id)) {
+      return NextResponse.json(
+        { error: "Nome da categoria já em uso" },
+        { status: 400 }
+      );
+    }
 
     const categoriaAtualizada = await prisma.categoriaDeTransacao.update({
       where: { id: Number(id) },
@@ -164,7 +188,7 @@ export async function PUT(request: Request) {
  *     responses:
  *       200:
  *         description: Categoria removida com sucesso
- *       404:
+ *       400:
  *         description: ID da categoria não fornecido
  *       500:
  *         description: Erro ao remover categoria

@@ -24,7 +24,7 @@ export default function TransactionTable({ transactions }: TransactionTableProps
       headerName: "Type", 
       width: 150,
       renderCell: (params: { value: string; }) =>
-        params.value === "ENTRADA" ? "✅ Entry" : "❌ Exit",
+        params.value === "ENTRADA" ? "✅ Entrada" : "❌ Saída",
     },
   ];
 

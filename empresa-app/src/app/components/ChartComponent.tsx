@@ -1,9 +1,14 @@
 import { Bar, BarChart, XAxis, YAxis, Tooltip, Legend } from "recharts";
 
-function ChartComponent() {
+interface ChartComponentProps {
+  entradas: number;
+  saidas: number;
+}
+
+function ChartComponent({ entradas, saidas }: ChartComponentProps) {
   const chartData = [
-    { name: "Entradas", value: 2000, fill: "#4CAF50" },
-    { name: "Saídas", value: 500, fill: "#F44336" },
+    { name: "Entradas", value: entradas, fill: "#4CAF50" },
+    { name: "Saídas", value: saidas, fill: "#F44336" },
   ];
 
   return (

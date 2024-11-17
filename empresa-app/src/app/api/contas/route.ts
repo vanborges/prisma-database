@@ -8,6 +8,12 @@ import prisma from "../../lib/PrismaClient";
  *     description: Operações relacionadas às contas
  */
 
+// Helper para tratar erros e responder consistentemente
+const handleError = (error: any, message: string, status = 500) => {
+  console.error(message, error);
+  return NextResponse.json({ error: message }, { status });
+};
+
 /**
  * @swagger
  * /api/contas:
@@ -37,6 +43,8 @@ import prisma from "../../lib/PrismaClient";
  *     responses:
  *       200:
  *         description: Conta criada com sucesso
+ *       400:
+ *         description: Dados incompletos para criar conta
  *       500:
  *         description: Erro ao criar conta
  */
@@ -44,7 +52,6 @@ export async function POST(request: Request) {
   try {
     const { usuarioId, tipoDeConta, saldo } = await request.json();
 
-    // Verifica se todos os dados necessários foram fornecidos
     if (!usuarioId || !tipoDeConta || saldo === undefined) {
       return NextResponse.json(
         { error: "Dados incompletos para criar conta" },
@@ -57,16 +64,12 @@ export async function POST(request: Request) {
         usuarioId,
         tipoDeConta,
         saldo,
-        criadoEm: new Date(),
       },
     });
 
     return NextResponse.json(novaConta, { status: 200 });
   } catch (error) {
-    return NextResponse.json(
-      { error: "Erro ao criar conta" },
-      { status: 500 }
-    );
+    return handleError(error, "Erro ao criar conta");
   }
 }
 
@@ -74,35 +77,44 @@ export async function POST(request: Request) {
  * @swagger
  * /api/contas:
  *   get:
- *     summary: Lista todas as contas
+ *     summary: Lista todas as contas ou as contas de um usuário
  *     tags: [Contas]
- *     description: Obtém todas as contas do banco de dados.
+ *     description: Obtém todas as contas ou filtra por usuário.
+ *     parameters:
+ *       - name: usuarioId
+ *         in: query
+ *         required: false
+ *         description: ID do usuário para filtrar contas
+ *         schema:
+ *           type: integer
  *     responses:
  *       200:
  *         description: Lista de contas retornada com sucesso
  *       500:
  *         description: Erro ao buscar contas
  */
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url);
+    const usuarioId = searchParams.get("usuarioId");
+
+    const where = usuarioId
+      ? { usuarioId: Number(usuarioId) }
+      : undefined;
+
     const contas = await prisma.conta.findMany({
-      include: {
-        usuario: true, // Inclui dados do usuário associado, caso necessário
-      },
+      where,
     });
 
     return NextResponse.json(contas, { status: 200 });
   } catch (error) {
-    return NextResponse.json(
-      { error: "Erro ao buscar contas" },
-      { status: 500 }
-    );
+    return handleError(error, "Erro ao buscar contas");
   }
 }
 
 /**
  * @swagger
- * /api/contas?id={id}:
+ * /api/contas:
  *   put:
  *     summary: Atualiza uma conta
  *     tags: [Contas]
@@ -124,11 +136,9 @@ export async function GET() {
  *               tipoDeConta:
  *                 type: string
  *                 description: Tipo da conta
- *                 example: "Corrente"
  *               saldo:
  *                 type: number
  *                 description: Saldo atualizado da conta
- *                 example: 1200.00
  *     responses:
  *       200:
  *         description: Conta atualizada com sucesso
@@ -140,18 +150,19 @@ export async function GET() {
  *         description: Erro ao atualizar conta
  */
 export async function PUT(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const id = searchParams.get("id");
-
-  if (!id) {
-    return NextResponse.json(
-      { error: "ID da conta não fornecido" },
-      { status: 400 }
-    );
-  }
-
   try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
+
+    if (!id) {
+      return NextResponse.json(
+        { error: "ID da conta não fornecido" },
+        { status: 400 }
+      );
+    }
+
     const { tipoDeConta, saldo } = await request.json();
+
     const contaAtualizada = await prisma.conta.update({
       where: { id: Number(id) },
       data: { tipoDeConta, saldo },
@@ -159,16 +170,13 @@ export async function PUT(request: Request) {
 
     return NextResponse.json(contaAtualizada, { status: 200 });
   } catch (error) {
-    return NextResponse.json(
-      { error: "Erro ao atualizar conta" },
-      { status: 500 }
-    );
+    return handleError(error, "Erro ao atualizar conta");
   }
 }
 
 /**
  * @swagger
- * /api/contas?id={id}:
+ * /api/contas:
  *   delete:
  *     summary: Remove uma conta
  *     tags: [Contas]
@@ -183,23 +191,23 @@ export async function PUT(request: Request) {
  *     responses:
  *       200:
  *         description: Conta removida com sucesso
- *       404:
+ *       400:
  *         description: ID da conta não fornecido
  *       500:
  *         description: Erro ao remover conta
  */
 export async function DELETE(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const id = searchParams.get("id");
-
-  if (!id) {
-    return NextResponse.json(
-      { error: "ID da conta não fornecido" },
-      { status: 400 }
-    );
-  }
-
   try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
+
+    if (!id) {
+      return NextResponse.json(
+        { error: "ID da conta não fornecido" },
+        { status: 400 }
+      );
+    }
+
     await prisma.conta.delete({
       where: { id: Number(id) },
     });
@@ -209,9 +217,6 @@ export async function DELETE(request: Request) {
       { status: 200 }
     );
   } catch (error) {
-    return NextResponse.json(
-      { error: "Erro ao remover conta" },
-      { status: 500 }
-    );
+    return handleError(error, "Erro ao remover conta");
   }
 }

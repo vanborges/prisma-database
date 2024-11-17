@@ -11,6 +11,7 @@ import {
   Select,
   InputLabel,
   FormControl,
+  SelectChangeEvent,
 } from "@mui/material";
 
 interface ModalProps {
@@ -34,9 +35,11 @@ export default function TransacoesModal({
     data: "",
     contaId: "",
   });
-  const [contas, setContas] = useState<{ id: number; tipoDeConta: string }[]>(
-    []
-  );
+  const [contas, setContas] = useState<{
+    nomeInstituicao: string;
+    id: number;
+    tipoDeConta: string;
+  }[]>([]);
   const [notification, setNotification] = useState<{
     message: string;
     type: "success" | "error";
@@ -64,11 +67,16 @@ export default function TransacoesModal({
   };
 
   // Atualiza valores do formulário
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name!]: value as string }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSelectChange = (e: SelectChangeEvent<string>) => {
+    const { value } = e.target;
+    setFormData((prev) => ({ ...prev, contaId: value }));
   };
 
   // Submete a transação
@@ -154,10 +162,9 @@ export default function TransacoesModal({
             <InputLabel id="contaId-label">Conta</InputLabel>
             <Select
               labelId="contaId-label"
-              id="contaId"
+              onChange={handleSelectChange}
               name="contaId"
               value={formData.contaId}
-              onChange={handleChange}
               required
             >
               <MenuItem value="">
@@ -165,8 +172,7 @@ export default function TransacoesModal({
               </MenuItem>
               {contas.map((conta) => (
                 <MenuItem key={conta.id} value={conta.id}>
-                  {conta.nomeInstituicao} - {conta.tipoDeConta} {" "}
-                  {/* Exibe o nome e tipo */}
+                  {conta.nomeInstituicao} - {conta.tipoDeConta}
                 </MenuItem>
               ))}
             </Select>
@@ -177,7 +183,7 @@ export default function TransacoesModal({
             label="Descrição"
             name="descricao"
             value={formData.descricao}
-            onChange={handleChange}
+            onChange={handleInputChange}
             required
             sx={{ mb: 2 }}
           />
@@ -188,7 +194,7 @@ export default function TransacoesModal({
             name="valor"
             type="number"
             value={formData.valor}
-            onChange={handleChange}
+            onChange={handleInputChange}
             required
             sx={{ mb: 2 }}
           />
@@ -199,7 +205,7 @@ export default function TransacoesModal({
             name="data"
             type="date"
             value={formData.data}
-            onChange={handleChange}
+            onChange={handleInputChange}
             required
             sx={{ mb: 2 }}
             InputLabelProps={{ shrink: true }}

@@ -1,80 +1,57 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
 async function main() {
-  // Criação de projetos
-  await prisma.projeto.createMany({
+  console.log("Populando banco de dados...");
+
+  // Criptografando a senha para os usuários
+  const senhaCriptografada = await bcrypt.hash("senha123", 10);
+
+  // Criando usuários
+  const usuarios = await prisma.usuario.createMany({
     data: [
-      { nome: 'Mickey e Amigos' },
-      { nome: 'Disney Princesses' },
-      { nome: 'Pixar Adventures' }
-    ]
+      { nomeDeUsuario: "johndoe", email: "johndoe@example.com", senha: senhaCriptografada },
+      { nomeDeUsuario: "janedoe", email: "janedoe@example.com", senha: senhaCriptografada },
+    ],
   });
+  console.log("Usuários criados:", usuarios);
 
-  // Criação de funcionários
-  await prisma.funcionario.create({
-    data: {
-      nome: 'Mickey Mouse',
-      salario: 3000,
-      endereco: {
-        create: {
-          rua: 'Rua da Diversão',
-          bairro: 'Land of Magic',
-          numero: 123
-        }
-      },
-      dependentes: {
-        create: [
-          {
-            nome: 'Minnie Mouse',
-            parentesco: 'Namorada'
-          }
-        ]
-      },
-      projetos: {
-        create: [
-          { projeto: { connect: { id: 1 } } },
-          { projeto: { connect: { id: 2 } } }
-        ]
-      }
-    }
+  // Buscando os IDs dos usuários criados
+  const usuario1 = await prisma.usuario.findUnique({ where: { email: "johndoe@example.com" } });
+  const usuario2 = await prisma.usuario.findUnique({ where: { email: "janedoe@example.com" } });
+
+  // Criando contas associadas aos usuários
+  const contas = await prisma.conta.createMany({
+    data: [
+      { usuarioId: usuario1.id, tipoDeConta: "Corrente", nomeInstituicao: "Banco do Brasil", saldo: 1000 },
+      { usuarioId: usuario2.id, tipoDeConta: "Poupança", nomeInstituicao: "Caixa Econômica", saldo: 500 },
+    ],
   });
+  console.log("Contas criadas:", contas);
 
-  await prisma.funcionario.create({
-    data: {
-      nome: 'Donald Duck',
-      salario: 2500,
-      endereco: {
-        create: {
-          rua: 'Avenida Alegria',
-          bairro: 'Happyland',
-          numero: 456
-        }
-      },
-      dependentes: {
-        create: [
-          {
-            nome: 'Daisy Duck',
-            parentesco: 'Namorada'
-          }
-        ]
-      },
-      projetos: {
-        create: [
-          { projeto: { connect: { id: 1 } } },
-          { projeto: { connect: { id: 3 } } }
-        ]
-      }
-    }
+  // Buscando as contas para associar transações
+  const conta1 = await prisma.conta.findFirst({ where: { usuarioId: usuario1.id } });
+  const conta2 = await prisma.conta.findFirst({ where: { usuarioId: usuario2.id } });
+
+  // Criando transações para as contas
+  const transacoes = await prisma.transacao.createMany({
+    data: [
+      { contaId: conta1.id, valor: -100, tipoDeTransacao: "SAIDA", descricao: "Compra no mercado", dataTransacao: new Date() },
+      { contaId: conta1.id, valor: 500, tipoDeTransacao: "ENTRADA", descricao: "Depósito bancário", dataTransacao: new Date() },
+      { contaId: conta2.id, valor: -50, tipoDeTransacao: "SAIDA", descricao: "Conta de luz", dataTransacao: new Date() },
+      { contaId: conta2.id, valor: 100, tipoDeTransacao: "ENTRADA", descricao: "Transferência recebida", dataTransacao: new Date() },
+    ],
   });
+  console.log("Transações criadas:", transacoes);
 
-  console.log('Dados inseridos com sucesso!');
+  console.log("Seed finalizada com sucesso!");
 }
 
 main()
-  .catch(e => {
-    console.error(e);
+  .catch((e) => {
+    console.error("Erro ao executar seed:", e);
     process.exit(1);
   })
   .finally(async () => {

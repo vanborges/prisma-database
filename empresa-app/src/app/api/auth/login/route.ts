@@ -4,12 +4,10 @@ import prisma from "../../../lib/PrismaClient";
 import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET || "sua_chave_secreta";
-
 export async function POST(request: Request) {
   try {
     const { email, senha } = await request.json();
 
-    // Validação básica
     if (!email || !senha) {
       return NextResponse.json(
         { success: false, message: "E-mail e senha são obrigatórios" },
@@ -17,36 +15,30 @@ export async function POST(request: Request) {
       );
     }
 
-    // Buscar o usuário
-    const usuario = await prisma.usuario.findUnique({
-      where: { email },
-    });
+    const usuario = await prisma.usuario.findUnique({ where: { email } });
 
     if (!usuario) {
       return NextResponse.json(
-        { success: false, message: "E-mail ou senha inválidos" },
-        { status: 401 }
+        { success: false, message: "Usuário não encontrado" },
+        { status: 404 }
       );
     }
 
-    // Comparar senha
     const senhaValida = await bcrypt.compare(senha, usuario.senha);
 
     if (!senhaValida) {
       return NextResponse.json(
-        { success: false, message: "E-mail ou senha inválidos" },
+        { success: false, message: "Senha incorreta" },
         { status: 401 }
       );
     }
 
-    // Gerar JWT
     const token = jwt.sign(
       { userId: usuario.id, email: usuario.email },
       JWT_SECRET,
       { expiresIn: "1h" }
     );
 
-    // Resposta com o token e os dados do usuário
     return NextResponse.json(
       {
         success: true,

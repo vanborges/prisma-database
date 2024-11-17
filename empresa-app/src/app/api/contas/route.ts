@@ -56,7 +56,6 @@ export async function POST(request: Request) {
     const { usuarioId, tipoDeConta, saldo, nomeInstituicao } =
       await request.json();
 
-    // Validações básicas
     if (!usuarioId || !tipoDeConta || saldo === undefined || !nomeInstituicao) {
       return NextResponse.json(
         {
@@ -67,19 +66,17 @@ export async function POST(request: Request) {
       );
     }
 
-    // Criação da conta no banco
     const novaConta = await prisma.conta.create({
-      data: {
-        usuarioId,
-        tipoDeConta,
-        saldo,
-        nomeInstituicao, // Novo campo adicionado
-      },
+      data: { usuarioId, tipoDeConta, saldo, nomeInstituicao },
     });
 
     return NextResponse.json(novaConta, { status: 200 });
   } catch (error) {
-    return handleError(error, "Erro ao criar conta");
+    console.error("Erro ao criar conta:", error);
+    return NextResponse.json(
+      { error: "Erro interno no servidor." },
+      { status: 500 }
+    );
   }
 }
 
@@ -110,13 +107,15 @@ export async function GET(request: Request) {
 
     const where = usuarioId ? { usuarioId: Number(usuarioId) } : undefined;
 
-    const contas = await prisma.conta.findMany({
-      where,
-    });
+    const contas = await prisma.conta.findMany({ where });
 
     return NextResponse.json(contas, { status: 200 });
   } catch (error) {
-    return handleError(error, "Erro ao buscar contas");
+    console.error("Erro ao buscar contas:", error);
+    return NextResponse.json(
+      { error: "Erro ao buscar contas." },
+      { status: 500 }
+    );
   }
 }
 /**
@@ -173,36 +172,25 @@ export async function PUT(request: Request) {
 
     const { tipoDeConta, saldo, nomeInstituicao } = await request.json();
 
-    // Validações básicas
     if (!tipoDeConta && saldo === undefined && !nomeInstituicao) {
       return NextResponse.json(
-        {
-          error:
-            "Pelo menos um campo (tipoDeConta, saldo, nomeInstituicao) deve ser atualizado",
-        },
+        { error: "Nenhum campo foi fornecido para atualização." },
         { status: 400 }
       );
     }
 
-    // Atualização da conta no banco
     const contaAtualizada = await prisma.conta.update({
       where: { id: Number(id) },
-      data: {
-        ...(tipoDeConta && { tipoDeConta }),
-        ...(saldo !== undefined && { saldo }),
-        ...(nomeInstituicao && { nomeInstituicao }),
-      },
+      data: { tipoDeConta, saldo, nomeInstituicao },
     });
 
     return NextResponse.json(contaAtualizada, { status: 200 });
   } catch (error) {
-    if (error instanceof Error && "code" in error && error.code === "P2025") {
-      return NextResponse.json(
-        { error: "Conta não encontrada" },
-        { status: 404 }
-      );
-    }
-    return handleError(error, "Erro ao atualizar conta");
+    console.error("Erro ao atualizar conta:", error);
+    return NextResponse.json(
+      { error: "Erro ao atualizar conta." },
+      { status: 500 }
+    );
   }
 }
 
@@ -240,15 +228,18 @@ export async function DELETE(request: Request) {
       );
     }
 
-    await prisma.conta.delete({
-      where: { id: Number(id) },
-    });
+    await prisma.conta.delete({ where: { id: Number(id) } });
 
     return NextResponse.json(
-      { message: "Conta removida com sucesso" },
+      { message: "Conta excluída com sucesso." },
       { status: 200 }
     );
   } catch (error) {
-    return handleError(error, "Erro ao remover conta");
+    console.error("Erro ao excluir conta:", error);
+    return NextResponse.json(
+      { error: "Erro ao excluir conta." },
+      { status: 500 }
+    );
   }
 }
+

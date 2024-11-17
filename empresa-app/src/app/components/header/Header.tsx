@@ -1,50 +1,46 @@
-"use client";
-
-import { AppBar, Toolbar, Typography, Select, MenuItem } from "@mui/material";
-import { useState, useEffect } from "react";
+import React from "react";
 
 interface HeaderProps {
-  contas: { id: number; tipoDeConta: string }[];
+  contas: { id: number; nomeInstituicao: string; tipoDeConta: string }[];
   onSelectConta: (id: number) => void;
 }
 
-export default function Header({ contas, onSelectConta }: HeaderProps) {
-  const [selectedConta, setSelectedConta] = useState<number | null>(null);
-
-  useEffect(() => {
-    if (contas.length > 0 && selectedConta === null) {
-      setSelectedConta(contas[0].id);
-      onSelectConta(contas[0].id);
-    }
-  }, [contas, selectedConta, onSelectConta]);
-
-  const handleChange = (event: any) => {
-    const contaId = event.target.value;
-    setSelectedConta(contaId);
-    onSelectConta(contaId);
+const Header: React.FC<HeaderProps> = ({ contas, onSelectConta }) => {
+  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedId = parseInt(event.target.value, 10);
+    onSelectConta(selectedId);
   };
 
   return (
-    <AppBar position="static" style={{ backgroundColor: "#2c6e49" }}>
-      <Toolbar style={{ display: "flex", justifyContent: "space-between" }}>
-        <Typography variant="h6">Controle Financeiro</Typography>
-        <div>
-          <Typography variant="body1" style={{ marginRight: "10px", display: "inline" }}>
-            Selecione a Conta:
-          </Typography>
-          <Select
-            value={selectedConta || ""}
-            onChange={handleChange}
-            style={{ backgroundColor: "#fff", borderRadius: "5px", minWidth: "200px" }}
-          >
-            {contas.map((conta) => (
-              <MenuItem key={conta.id} value={conta.id}>
-                {conta.tipoDeConta} (ID: {conta.id})
-              </MenuItem>
-            ))}
-          </Select>
-        </div>
-      </Toolbar>
-    </AppBar>
+    <header style={styles.header}>
+      <h1>Controle Financeiro</h1>
+      <select onChange={handleChange} style={styles.select}>
+        <option value="">Selecione uma Conta</option>
+        {contas.map((conta) => (
+          <option key={conta.id} value={conta.id}>
+            {conta.nomeInstituicao} - {conta.tipoDeConta}
+          </option>
+        ))}
+      </select>
+    </header>
   );
-}
+};
+
+const styles = {
+  header: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: "10px 20px",
+    backgroundColor: "#2c6e49",
+    color: "#fff",
+  },
+  select: {
+    padding: "10px",
+    borderRadius: "5px",
+    border: "1px solid #ddd",
+    fontSize: "16px",
+  },
+};
+
+export default Header;

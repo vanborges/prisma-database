@@ -21,6 +21,7 @@ function ChartComponent({ entradas, saidas }: ChartComponentProps) {
       {/* titulo do grafico */}
 
       
+      
     </BarChart>
 
   );}

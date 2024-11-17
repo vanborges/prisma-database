@@ -13,7 +13,6 @@ const handleError = (error: any, message: string, status = 500) => {
   console.error(message, error);
   return NextResponse.json({ error: message }, { status });
 };
-
 /**
  * @swagger
  * /api/contas:
@@ -40,6 +39,10 @@ const handleError = (error: any, message: string, status = 500) => {
  *                 type: number
  *                 description: Saldo inicial da conta
  *                 example: 1000.00
+ *               nomeInstituicao:
+ *                 type: string
+ *                 description: Nome da instituição bancária
+ *                 example: "Banco do Brasil"
  *     responses:
  *       200:
  *         description: Conta criada com sucesso
@@ -50,20 +53,27 @@ const handleError = (error: any, message: string, status = 500) => {
  */
 export async function POST(request: Request) {
   try {
-    const { usuarioId, tipoDeConta, saldo } = await request.json();
+    const { usuarioId, tipoDeConta, saldo, nomeInstituicao } =
+      await request.json();
 
-    if (!usuarioId || !tipoDeConta || saldo === undefined) {
+    // Validações básicas
+    if (!usuarioId || !tipoDeConta || saldo === undefined || !nomeInstituicao) {
       return NextResponse.json(
-        { error: "Dados incompletos para criar conta" },
+        {
+          error:
+            "Todos os campos são obrigatórios: usuarioId, tipoDeConta, saldo, nomeInstituicao",
+        },
         { status: 400 }
       );
     }
 
+    // Criação da conta no banco
     const novaConta = await prisma.conta.create({
       data: {
         usuarioId,
         tipoDeConta,
         saldo,
+        nomeInstituicao, // Novo campo adicionado
       },
     });
 
@@ -98,9 +108,7 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const usuarioId = searchParams.get("usuarioId");
 
-    const where = usuarioId
-      ? { usuarioId: Number(usuarioId) }
-      : undefined;
+    const where = usuarioId ? { usuarioId: Number(usuarioId) } : undefined;
 
     const contas = await prisma.conta.findMany({
       where,
@@ -111,7 +119,6 @@ export async function GET(request: Request) {
     return handleError(error, "Erro ao buscar contas");
   }
 }
-
 /**
  * @swagger
  * /api/contas:
@@ -139,11 +146,14 @@ export async function GET(request: Request) {
  *               saldo:
  *                 type: number
  *                 description: Saldo atualizado da conta
+ *               nomeInstituicao:
+ *                 type: string
+ *                 description: Nome da instituição bancária
  *     responses:
  *       200:
  *         description: Conta atualizada com sucesso
  *       400:
- *         description: ID da conta não fornecido
+ *         description: ID da conta não fornecido ou dados inválidos
  *       404:
  *         description: Conta não encontrada
  *       500:
@@ -161,15 +171,37 @@ export async function PUT(request: Request) {
       );
     }
 
-    const { tipoDeConta, saldo } = await request.json();
+    const { tipoDeConta, saldo, nomeInstituicao } = await request.json();
 
+    // Validações básicas
+    if (!tipoDeConta && saldo === undefined && !nomeInstituicao) {
+      return NextResponse.json(
+        {
+          error:
+            "Pelo menos um campo (tipoDeConta, saldo, nomeInstituicao) deve ser atualizado",
+        },
+        { status: 400 }
+      );
+    }
+
+    // Atualização da conta no banco
     const contaAtualizada = await prisma.conta.update({
       where: { id: Number(id) },
-      data: { tipoDeConta, saldo },
+      data: {
+        ...(tipoDeConta && { tipoDeConta }),
+        ...(saldo !== undefined && { saldo }),
+        ...(nomeInstituicao && { nomeInstituicao }),
+      },
     });
 
     return NextResponse.json(contaAtualizada, { status: 200 });
   } catch (error) {
+    if (error instanceof Error && "code" in error && error.code === "P2025") {
+      return NextResponse.json(
+        { error: "Conta não encontrada" },
+        { status: 404 }
+      );
+    }
     return handleError(error, "Erro ao atualizar conta");
   }
 }

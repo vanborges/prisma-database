@@ -13,17 +13,23 @@ export default function Sidebar({ openModal }: SidebarProps) {
       <h2 className={styles.title}>Controle Financeiro</h2>
       <ul className={styles.navList}>
         <li>
-          <Link href="/dashboard">Dashboard</Link>
+          <Link href="./dashboard">Dashboard</Link>
         </li>
         <li>
           <button className={styles.button} onClick={() => openModal("pagar")}>
-            Contas a Pagar
+            Pagar
           </button>
         </li>
         <li>
-          <button className={styles.button} onClick={() => openModal("receber")}>
-            Contas a Receber
+          <button
+            className={styles.button}
+            onClick={() => openModal("receber")}
+          >
+            Receber
           </button>
+        </li>
+        <li>
+          <Link href="./contas">Contas</Link>
         </li>
         <li>
           <Link href="/categorias">Categorias</Link>

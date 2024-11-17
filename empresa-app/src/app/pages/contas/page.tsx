@@ -1,65 +1,42 @@
 "use client";
 
+import { useState, useEffect } from "react";
+import { Button, Table, TableContainer, TableHead, TableRow, TableCell, TableBody, Paper } from "@mui/material";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Header from "../../components/header/Header";
-import styles from "./Contas.module.css"; // Estilo específico para a página de Contas
-
-import { useState, useEffect } from "react";
-import {
-  Button,
-  Table,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  Paper,
-} from "@mui/material";
+import ModalConta from "../../components/modal/contas/ModalConta";
+import useContas, { Conta } from "../../hooks/useContas";
+import styles from "./Contas.module.css";
 
 export default function ContasPage() {
-  interface Conta {
-    id: number;
-    nomeInstituicao: string;
-    tipoDeConta: string;
-    saldo: number;
-  }
-
-  const [contas, setContas] = useState<Conta[]>([]);
-  const [selectedConta, setSelectedConta] = useState<number | null>(null);
-
-  // Fetch das contas
-  const fetchContas = async () => {
-    const res = await fetch("/api/contas");
-    const data = await res.json();
-    setContas(data);
-  };
+  const { contas, fetchContas, addConta, updateConta, deleteConta } = useContas();
+  const [openModal, setOpenModal] = useState(false);
+  const [editingConta, setEditingConta] = useState<Conta | null>(null);
 
   useEffect(() => {
     fetchContas();
   }, []);
 
+  const handleSave = (data: any) => {
+    if (editingConta) {
+      updateConta(editingConta.id, data);
+    } else {
+      addConta(data);
+    }
+    setEditingConta(null);
+  };
+
   return (
     <div className={styles.container}>
-      <div className={styles.sidebar}>
-        <Sidebar openModal={() => {}} />
-      </div>
+      <Sidebar openModal={() => {}} />
       <div className={styles.mainContent}>
-        <div className={styles.header}>
-          <Header
-            contas={contas}
-            onSelectConta={(id) => setSelectedConta(id)}
-          />
-        </div>
+        <Header contas={contas} onSelectConta={() => {}} />
         <div className={styles.main}>
           <h1 className={styles.titulo}>Gerenciamento de Contas</h1>
-          <Button
-            variant="contained"
-            color="primary"
-            style={{ marginBottom: "20px" }}
-          >
+          <Button variant="contained" color="primary" onClick={() => setOpenModal(true)}>
             Nova Conta
           </Button>
-          <TableContainer component={Paper}>
+          <TableContainer component={Paper} style={{ marginTop: "20px" }}>
             <Table>
               <TableHead>
                 <TableRow>
@@ -76,12 +53,20 @@ export default function ContasPage() {
                     <TableCell>{conta.tipoDeConta}</TableCell>
                     <TableCell>{conta.saldo}</TableCell>
                     <TableCell>
-                      <Button variant="contained" color="secondary">
+                      <Button
+                        variant="contained"
+                        color="secondary"
+                        onClick={() => {
+                          setEditingConta(conta);
+                          setOpenModal(true);
+                        }}
+                      >
                         Editar
                       </Button>
                       <Button
                         variant="contained"
                         color="error"
+                        onClick={() => deleteConta(conta.id)}
                         style={{ marginLeft: "10px" }}
                       >
                         Excluir
@@ -94,6 +79,17 @@ export default function ContasPage() {
           </TableContainer>
         </div>
       </div>
+      {openModal && (
+        <ModalConta
+          open={openModal}
+          onClose={() => {
+            setOpenModal(false);
+            setEditingConta(null);
+          }}
+          onSave={handleSave}
+          initialData={editingConta || undefined}
+        />
+      )}
     </div>
   );
 }

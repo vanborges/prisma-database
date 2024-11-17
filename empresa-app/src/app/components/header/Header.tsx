@@ -16,7 +16,7 @@ const Header: React.FC<HeaderProps> = ({ contas, onSelectConta }) => {
       <h1>Controle Financeiro</h1>
       <select onChange={handleChange} style={styles.select}>
         <option value="">Selecione uma Conta</option>
-        {contas.map((conta) => (
+        {(contas || []).map((conta) => (
           <option key={conta.id} value={conta.id}>
             {conta.nomeInstituicao} - {conta.tipoDeConta}
           </option>
@@ -25,7 +25,6 @@ const Header: React.FC<HeaderProps> = ({ contas, onSelectConta }) => {
     </header>
   );
 };
-
 const styles = {
   header: {
     display: "flex",

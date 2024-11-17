@@ -12,7 +12,7 @@ function ChartComponent({ entradas, saidas }: ChartComponentProps) {
   ];
 
   return (
-    <BarChart width={400} height={300} data={chartData}>
+    <BarChart width={300} height={400} data={chartData}>
       <XAxis dataKey="name" />
       <YAxis />
       <Tooltip />
@@ -20,8 +20,9 @@ function ChartComponent({ entradas, saidas }: ChartComponentProps) {
       <Bar dataKey="value" name={"Valor"} fill="#8884d8" />
       {/* titulo do grafico */}
       
+      
     </BarChart>
-  );
-}
+
+  );}
 
 export default ChartComponent;

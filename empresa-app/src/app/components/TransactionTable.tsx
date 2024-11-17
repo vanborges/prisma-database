@@ -9,19 +9,24 @@ interface TransactionTableProps {
   }[];
 }
 
-export default function TransactionTable({ transactions }: TransactionTableProps) {
+export default function TransactionTable({
+  transactions,
+}: TransactionTableProps) {
   const columns: GridColDef[] = [
     { field: "descricao", headerName: "Descrição", width: 200 },
-    { 
-      field: "valor", 
-      headerName: "Valor", 
+    {
+      field: "valor",
+      headerName: "Valor",
       width: 150,
       renderCell: (params) =>
-        params.value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }),
+        params.value.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        }),
     },
-    { 
-      field: "tipoDeTransacao", 
-      headerName: "Tipo de Transação", 
+    {
+      field: "tipoDeTransacao",
+      headerName: "Tipo de Transação",
       width: 150,
       renderCell: (params) =>
         params.value === "ENTRADA" ? "✅ Entrada" : "❌ Saída",
@@ -29,7 +34,7 @@ export default function TransactionTable({ transactions }: TransactionTableProps
   ];
 
   return (
-    <div style={{ height: 600, width: "30%", marginLeft: 120 }}>
+    <div style={{ height: 400, width: "48%"}}>
       <DataGrid
         rows={transactions}
         columns={columns}

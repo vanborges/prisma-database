@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 
 interface Conta {
+  nome: string;
   nomeInstituicao: string;
   usuarioId: number;
   id: number;

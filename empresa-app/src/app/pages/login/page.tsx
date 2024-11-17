@@ -22,18 +22,25 @@ export default function LoginPage() {
         body: JSON.stringify({ email, senha: password }), // Corrigido para 'senha'
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const errorData = await response.json();
-        setErrorMessage(errorData.error); // Define a mensagem de erro
+        setErrorMessage(data.message || "Erro ao fazer login");
         return;
       }
 
+      // Armazena o userId e o token no localStorage
+      localStorage.setItem("userId", data.data.usuario.id);
+      localStorage.setItem("token", data.data.token);
+
       console.log("Login bem-sucedido");
       setErrorMessage(""); // Limpa a mensagem de erro em caso de sucesso
-      router.push("/pages/dashboard"); // Redireciona para o dashboard após login bem-sucedido
+
+      // Redireciona para o dashboard após login bem-sucedido
+      router.push("/pages/dashboard");
     } catch (error) {
       console.error("Erro ao fazer login:", error);
-      setErrorMessage("Erro ao fazer login");
+      setErrorMessage("Erro ao fazer login. Tente novamente.");
     }
   };
 
@@ -42,7 +49,7 @@ export default function LoginPage() {
       <div style={styles.loginBox}>
         <h2 style={styles.title}>Controle Financeiro</h2>
         <form onSubmit={handleLogin} style={styles.form}>
-          {errorMessage && <p style={styles.error}>{errorMessage}</p>} {/* Mensagem de erro acima do formulário */}
+          {errorMessage && <p style={styles.error}>{errorMessage}</p>}
           <input
             type="email"
             placeholder="E-mail"
@@ -124,7 +131,7 @@ const styles = {
   error: {
     color: "red",
     fontSize: "14px",
-    marginBottom: "10px", // Ajuste para posicionar a mensagem de erro acima dos campos
+    marginBottom: "10px",
   },
   registerText: {
     marginTop: "15px",

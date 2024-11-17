@@ -10,8 +10,7 @@ import Sidebar from "../../components/sidebar/Sidebar";
 import ChartComponent from "../../components/ChartComponent";
 
 export default function DashboardPage() {
-  const { entradas, saidas, saldo, transactions, fetchData, loading, contas } =
-    useFetchData();
+  const { contas, transactions, fetchData, loading } = useFetchData();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [tipoTransacao, setTipoTransacao] = useState<"pagar" | "receber">(
     "pagar"
@@ -33,18 +32,28 @@ export default function DashboardPage() {
 
   // Filtrar transações pela conta selecionada
   const filteredTransactions = selectedContaId
-    ? transactions.filter((t: any) => t.contaId === selectedContaId)
+    ? transactions.filter((t) => t.contaId === selectedContaId)
     : transactions;
 
+  // Formatar transações para o formato esperado por TransactionTable
+  const formattedTransactions = filteredTransactions.map((t) => ({
+    id: t.id || 0,
+    descricao: t.descricao || "Sem descrição",
+    valor: parseFloat(t.valor),
+    tipoDeTransacao: t.tipoDeTransacao,
+  }));
+
   // Obter saldo, entradas e saídas da conta selecionada
-  const contaData = contas.find((c: any) => c.id === selectedContaId);
-  const saldoConta = contaData ? contaData.saldo : 0;
+  const contaData = contas.find((c) => c.id === selectedContaId);
+  const saldoConta = contaData ? Number(contaData.saldo) : 0;
+
   const entradasConta = filteredTransactions
-    .filter((t: any) => t.tipoDeTransacao === "ENTRADA")
-    .reduce((acc: number, t: any) => acc + parseFloat(t.valor), 0);
+    .filter((t) => t.tipoDeTransacao === "ENTRADA")
+    .reduce((acc, t) => acc + parseFloat(t.valor), 0);
+
   const saidasConta = filteredTransactions
-    .filter((t: any) => t.tipoDeTransacao === "SAIDA")
-    .reduce((acc: number, t: any) => acc + parseFloat(t.valor), 0);
+    .filter((t) => t.tipoDeTransacao === "SAIDA")
+    .reduce((acc, t) => acc + parseFloat(t.valor), 0);
 
   if (loading) {
     return <p style={{ textAlign: "center" }}>Carregando...</p>;
@@ -52,12 +61,9 @@ export default function DashboardPage() {
 
   return (
     <div>
-      {/* Header com seleção de conta */}
       <Header contas={contas} onSelectConta={handleSelectConta} />
-
       <div style={styles.layout}>
         <Sidebar openModal={openModal} />
-
         <div style={styles.content}>
           <h1 style={styles.title}>Controle Financeiro</h1>
           <div style={styles.summary}>
@@ -71,11 +77,11 @@ export default function DashboardPage() {
             />
             <SummaryCard
               title="Saldo"
-              value={`R$ ${Number(saldoConta).toFixed(2)}`}
+              value={`R$ ${saldoConta.toFixed(2)}`}
             />
           </div>
           <div style={styles.chartAndTable}>
-            <TransactionTable transactions={filteredTransactions} />
+            <TransactionTable transactions={formattedTransactions} />
             <ChartComponent entradas={entradasConta} saidas={saidasConta} />
           </div>
           <TransacoesModal

@@ -25,6 +25,7 @@
     "react": "^18",
     "react-data-table-component": "^7.6.2",
     "react-dom": "^18",
+    "react-select": "^5.8.3",
     "recharts": "^2.13.3",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"

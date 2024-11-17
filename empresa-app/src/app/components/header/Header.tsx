@@ -1,4 +1,5 @@
 import React from "react";
+import Select from "react-select";
 
 interface HeaderProps {
   contas: { id: number; nomeInstituicao: string; tipoDeConta: string }[];
@@ -6,25 +7,32 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ contas, onSelectConta }) => {
-  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedId = parseInt(event.target.value, 10);
-    onSelectConta(selectedId);
+  const options = contas.map((conta) => ({
+    value: conta.id,
+    label: `${conta.nomeInstituicao} - ${conta.tipoDeConta}`,
+  }));
+
+  const handleChange = (selectedOption: { value: number; label: string } | null) => {
+    if (selectedOption) {
+      onSelectConta(selectedOption.value);
+    }
   };
 
   return (
     <header style={styles.header}>
       <h1>Controle Financeiro</h1>
-      <select onChange={handleChange} style={styles.select}>
-        <option value="">Selecione uma Conta</option>
-        {(contas || []).map((conta) => (
-          <option key={conta.id} value={conta.id}>
-            {conta.nomeInstituicao} - {conta.tipoDeConta}
-          </option>
-        ))}
-      </select>
+      <div style={styles.selectContainer}>
+        <Select
+          options={options}
+          onChange={handleChange}
+          placeholder="Selecione uma Conta"
+          styles={customStyles}
+        />
+      </div>
     </header>
   );
 };
+
 const styles = {
   header: {
     display: "flex",
@@ -34,12 +42,25 @@ const styles = {
     backgroundColor: "#2c6e49",
     color: "#fff",
   },
-  select: {
-    padding: "10px",
-    borderRadius: "5px",
-    border: "1px solid #ddd",
-    fontSize: "16px",
+  selectContainer: {
+    width: "300px", // Ajuste o tamanho do select
   },
+};
+
+// Estilos personalizados para o react-select
+const customStyles = {
+  control: (base: any) => ({
+    ...base,
+    backgroundColor: "#fff",
+    borderRadius: "8px",
+    padding: "5px",
+    fontSize: "16px",
+  }),
+  option: (base: any, state: any) => ({
+    ...base,
+    backgroundColor: state.isFocused ? "#2c6e49" : "#fff",
+    color: state.isFocused ? "#fff" : "#000",
+  }),
 };
 
 export default Header;

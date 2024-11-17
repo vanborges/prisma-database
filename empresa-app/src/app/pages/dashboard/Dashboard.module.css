@@ -27,10 +27,9 @@
   flex-grow: 1;
 }
 .chartAndTable {
-    display: flex;
-    justify-content: space-between; /* Espaçamento uniforme */
-    gap: 20px; /* Espaço entre os itens */
-    align-items: flex-start; /* Alinha pela parte superior */
-    margin-top: 20px; /* Espaçamento superior opcional */
-  }
-  
+  display: flex;
+  justify-content: space-between; /* Espaçamento uniforme */
+  gap: 20px; /* Espaço entre os itens */
+  align-items: flex-start; /* Alinha pela parte superior */
+  margin-top: 20px; /* Espaçamento superior opcional */
+}

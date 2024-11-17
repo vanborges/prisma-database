@@ -55,7 +55,7 @@ export default function ContasPage() {
                     <TableCell>
                       <Button
                         variant="contained"
-                        color="secondary"
+                        color="warning"
                         onClick={() => {
                           setEditingConta(conta);
                           setOpenModal(true);
